@@ -1,0 +1,165 @@
+const { Attendance, Customer } = require('../models');
+const { AppError, asyncHandler, sendSuccess } = require('../utils/errorHandler');
+const { getLocalDateString, getLocalTimeString, paginate, createPaginationMeta } = require('../utils/helpers');
+
+/**
+ * @desc    Mark attendance for a customer
+ * @route   POST /api/attendance/mark
+ * @access  Private
+ */
+const markAttendance = asyncHandler(async (req, res, next) => {
+    const { customerId } = req.body;
+
+    // 1. Find customer
+    const customer = await Customer.findById(customerId);
+    if (!customer) {
+        return next(new AppError('Customer not found', 404));
+    }
+
+    // 2. Check if already marked for today
+    const todayStr = getLocalDateString();
+
+    const existingAttendance = await Attendance.findOne({
+        customerId: customer._id,
+        date: todayStr
+    });
+
+    if (existingAttendance) {
+        return next(new AppError('Attendance already marked for today', 400));
+    }
+
+    // 3. Create attendance record
+    const attendance = await Attendance.create({
+        customerId: customer._id,
+        customerName: customer.name,
+        date: todayStr,
+        time: getLocalTimeString(),
+        membershipStatus: customer.status, // Uses virtual field from Customer model
+        markedBy: req.user.id
+    });
+
+    // Broadcast real-time update
+    try {
+        const { getIO } = require('../config/socket');
+        const io = getIO();
+        io.emit('attendance:new', attendance);
+        io.emit('dashboard:update', { type: 'attendance' });
+    } catch (error) {
+        // Socket error shouldn't fail the request
+        console.error('Socket emit error:', error.message);
+    }
+
+    sendSuccess(res, 201, { attendance }, 'Attendance marked successfully');
+});
+
+/**
+ * @desc    Get attendance records with filtering
+ * @route   GET /api/attendance
+ * @access  Private
+ */
+const getAttendance = asyncHandler(async (req, res, next) => {
+    const {
+        page = 1,
+        limit = 10,
+        date,
+        customerId,
+        status
+    } = req.query;
+
+    const query = {};
+
+    // Filter by date (default to today if no filters provided? No, show all by default or let frontend decide)
+    if (date) {
+        query.date = date;
+    }
+
+    // Filter by customer
+    if (customerId) {
+        query.customerId = customerId;
+    }
+
+    // Filter by status
+    if (status) {
+        query.membershipStatus = status;
+    }
+
+    const { skip, limit: limitParsed } = paginate(page, limit);
+
+    const attendance = await Attendance.find(query)
+        .sort({ timestamp: -1 })
+        .skip(skip)
+        .limit(limitParsed)
+        .populate('markedBy', 'name');
+
+    const total = await Attendance.countDocuments(query);
+
+    sendSuccess(res, 200, {
+        attendance,
+        pagination: createPaginationMeta(total, page, limitParsed)
+    });
+});
+
+/**
+ * @desc    Get attendance stats
+ * @route   GET /api/attendance/stats
+ * @access  Private
+ */
+const getAttendanceStats = asyncHandler(async (req, res, next) => {
+    const { date } = req.query;
+    const queryDate = date || getLocalDateString();
+
+    // Stats for specific date
+    const totalToday = await Attendance.countDocuments({ date: queryDate });
+    const activeToday = await Attendance.countDocuments({ date: queryDate, membershipStatus: 'active' });
+    const expiredToday = await Attendance.countDocuments({ date: queryDate, membershipStatus: { $in: ['expired', 'expiring'] } });
+
+    // Weekly stats (last 7 days)
+    // This requires aggregation or multiple queries. Let's do a simple aggregation.
+    // Note: 'date' is stored as string YYYY-MM-DD, so we can sort/group by it.
+
+    // Get last 7 days dates
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        dates.push(getLocalDateString(d));
+    }
+
+    const weeklyStats = await Attendance.aggregate([
+        { $match: { date: { $in: dates } } },
+        { $group: { _id: '$date', count: { $sum: 1 } } },
+        { $sort: { _id: 1 } }
+    ]);
+
+    sendSuccess(res, 200, {
+        date: queryDate,
+        daily: {
+            total: totalToday,
+            active: activeToday,
+            expired: expiredToday
+        },
+        weekly: weeklyStats
+    });
+});
+
+/**
+ * @desc    Get customer attendance history
+ * @route   GET /api/attendance/customer/:customerId
+ * @access  Private
+ */
+const getCustomerAttendance = asyncHandler(async (req, res, next) => {
+    const { customerId } = req.params;
+
+    const attendance = await Attendance.find({ customerId })
+        .sort({ timestamp: -1 })
+        .limit(30); // Last 30 visits
+
+    sendSuccess(res, 200, { attendance });
+});
+
+module.exports = {
+    markAttendance,
+    getAttendance,
+    getAttendanceStats,
+    getCustomerAttendance
+};
