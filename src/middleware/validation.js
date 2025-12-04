@@ -29,6 +29,10 @@ const customerSchemas = {
         validity: Joi.date().iso(),
         notes: Joi.string().allow('').max(500),
         photo: Joi.string().allow('').optional(), // Allow any string (URL or base64)
+        // Member authentication fields (optional)
+        memberId: Joi.string().trim().min(3).max(20).optional(),
+        password: Joi.string().min(4).max(100).optional(),
+        isFirstLogin: Joi.boolean().optional(),
     }),
 
     update: Joi.object({
@@ -40,6 +44,10 @@ const customerSchemas = {
         validity: Joi.date().iso(),
         notes: Joi.string().allow('').max(500),
         photo: Joi.string().allow('').optional(), // Allow any string (URL or base64)
+        // Member authentication fields (optional)
+        memberId: Joi.string().trim().min(3).max(20).optional(),
+        password: Joi.string().min(4).max(100).optional(),
+        isFirstLogin: Joi.boolean().optional(),
     }).min(1), // At least one field must be provided
 };
 
