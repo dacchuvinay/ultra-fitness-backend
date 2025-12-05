@@ -2423,44 +2423,45 @@ class GymApp {
         if (this.currentView === 'attendance') {
             attendanceBtn.querySelector('.menu-text').textContent = 'List View';
         }
+    }
 
-        // --- Notification Center Methods ---
+    // --- Notification Center Methods ---
 
-        injectNotificationCenter() {
-            const performInjection = () => {
-                const headerActions = document.querySelector('.header-actions');
-                if (!headerActions) {
-                    console.warn('GymApp: Header actions container not found! Retrying in 1s...');
-                    setTimeout(performInjection, 1000);
-                    return;
-                }
+    injectNotificationCenter() {
+        const performInjection = () => {
+            const headerActions = document.querySelector('.header-actions');
+            if (!headerActions) {
+                console.warn('GymApp: Header actions container not found! Retrying in 1s...');
+                setTimeout(performInjection, 1000);
+                return;
+            }
 
-                if (document.getElementById('notification-bell-btn')) return;
+            if (document.getElementById('notification-bell-btn')) return;
 
-                console.log('GymApp: Injecting Notification Bell...');
+            console.log('GymApp: Injecting Notification Bell...');
 
-                // Create Bell Button
-                const btn = document.createElement('button');
-                btn.id = 'notification-bell-btn';
-                btn.className = 'notification-bell-btn';
-                btn.title = 'Notifications';
-                btn.innerHTML = `
+            // Create Bell Button
+            const btn = document.createElement('button');
+            btn.id = 'notification-bell-btn';
+            btn.className = 'notification-bell-btn';
+            btn.title = 'Notifications';
+            btn.innerHTML = `
                 <span style="font-size: 1.2em;">🔔</span>
                 <span class="notification-badge hide" id="notif-badge">0</span>
             `;
-                btn.onclick = (e) => {
-                    e.stopPropagation();
-                    this.toggleNotificationDropdown();
-                };
+            btn.onclick = (e) => {
+                e.stopPropagation();
+                this.toggleNotificationDropdown();
+            };
 
-                // Insert before Hamburger
-                headerActions.insertBefore(btn, headerActions.firstChild);
+            // Insert before Hamburger
+            headerActions.insertBefore(btn, headerActions.firstChild);
 
-                // Create Dropdown Container
-                const dropdown = document.createElement('div');
-                dropdown.id = 'notification-dropdown';
-                dropdown.className = 'notification-dropdown';
-                dropdown.innerHTML = `
+            // Create Dropdown Container
+            const dropdown = document.createElement('div');
+            dropdown.id = 'notification-dropdown';
+            dropdown.className = 'notification-dropdown';
+            dropdown.innerHTML = `
                 <div class="notification-header">
                     <h3>Notifications</h3>
                     <button class="clear-all-btn" onclick="app.clearNotifications()">Clear All</button>
@@ -2470,58 +2471,58 @@ class GymApp {
                 </div>
             `;
 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', (e) => {
-                    if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
-                        dropdown.classList.remove('show');
-                    }
-                });
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
 
-                document.body.appendChild(dropdown);
-            };
+            document.body.appendChild(dropdown);
+        };
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', performInjection);
-            } else {
-                performInjection();
-            }
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', performInjection);
+        } else {
+            performInjection();
+        }
+    }
+
+    toggleNotificationDropdown() {
+        const dropdown = document.getElementById('notification-dropdown');
+        if (dropdown) {
+            dropdown.classList.toggle('show');
+        }
+    }
+
+    addHistoryNotification(type, title, message) {
+        if (!this.notifications) this.notifications = [];
+        this.notifications.unshift({ type, title, message, time: new Date() });
+        this.updateNotificationUI();
+        this.showNotification(type, title, message);
+    }
+
+    updateNotificationUI() {
+        const badge = document.getElementById('notif-badge');
+        const list = document.getElementById('notification-list');
+        if (!badge || !list) return;
+
+        const count = this.notifications.length;
+        badge.textContent = count;
+        if (count > 0) {
+            badge.classList.remove('hide');
+            badge.classList.add('show');
+        } else {
+            badge.classList.remove('show');
+            badge.classList.add('hide');
         }
 
-        toggleNotificationDropdown() {
-            const dropdown = document.getElementById('notification-dropdown');
-            if (dropdown) {
-                dropdown.classList.toggle('show');
-            }
+        if (count === 0) {
+            list.innerHTML = '<div class="empty-notif">No new notifications</div>';
+            return;
         }
 
-        addHistoryNotification(type, title, message) {
-            if (!this.notifications) this.notifications = [];
-            this.notifications.unshift({ type, title, message, time: new Date() });
-            this.updateNotificationUI();
-            this.showNotification(type, title, message);
-        }
-
-        updateNotificationUI() {
-            const badge = document.getElementById('notif-badge');
-            const list = document.getElementById('notification-list');
-            if (!badge || !list) return;
-
-            const count = this.notifications.length;
-            badge.textContent = count;
-            if (count > 0) {
-                badge.classList.remove('hide');
-                badge.classList.add('show');
-            } else {
-                badge.classList.remove('show');
-                badge.classList.add('hide');
-            }
-
-            if (count === 0) {
-                list.innerHTML = '<div class="empty-notif">No new notifications</div>';
-                return;
-            }
-
-            list.innerHTML = this.notifications.map(n => `
+        list.innerHTML = this.notifications.map(n => `
             <div class="notification-item ${n.type}">
                 <div class="notif-item-header">
                     <span>${n.title}</span>
@@ -2530,13 +2531,13 @@ class GymApp {
                 <div class="notif-message">${n.message}</div>
             </div>
         `).join('');
-        }
-
-        clearNotifications() {
-            this.notifications = [];
-            this.updateNotificationUI();
-        }
     }
+
+    clearNotifications() {
+        this.notifications = [];
+        this.updateNotificationUI();
+    }
+}
 
 // Global functions for modal controls
 function openCustomerModal(customerId = null) {
