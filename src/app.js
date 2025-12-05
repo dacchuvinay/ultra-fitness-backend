@@ -29,7 +29,8 @@ app.options('*', cors());
 app.use(helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
     crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
-    crossOriginEmbedderPolicy: false
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: false // Disable CSP to allow inline scripts in Member Portal
 }));
 
 // Data sanitization against NoSQL query injection
