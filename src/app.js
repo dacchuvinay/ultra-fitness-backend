@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -39,6 +40,9 @@ app.use(xss());
 
 // Prevent parameter pollution
 app.use(hpp());
+
+// Serve Member Portal (Fixes CORS & Service Worker issues)
+app.use('/member', express.static(path.join(__dirname, '../public/member-app')));
 
 // Rate limiting
 const limiter = rateLimit({

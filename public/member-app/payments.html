@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#6c5ce7">
+    <title>Payments - Ultra Fitness</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-content">
+                <a href="./dashboard.html" class="btn-back">←</a>
+                <h1>Payment History</h1>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <div id="paymentList" class="list-container">
+                <p class="loading">Loading payments...</p>
+            </div>
+        </main>
+    </div>
+
+    <script src="./api.js"></script>
+    <script>
+        const api = new MemberAPI();
+        if (!api.token) window.location.href = './index.html';
+
+        async function loadPayments() {
+            try {
+                const response = await api.getPayments(10, 1);
+                const container = document.getElementById('paymentList');
+                container.innerHTML = '';
+
+                if (response.data.payments.length === 0) {
+                    container.innerHTML = '<p class="empty-state">No payment records yet</p>';
+                    return;
+                }
+
+                response.data.payments.forEach(payment => {
+                    const date = new Date(payment.paymentDate);
+                    const div = document.createElement('div');
+                    div.className = 'list-item payment-item';
+                    div.innerHTML = `
+                        <div class="item-icon">💳</div>
+                        <div class="item-content">
+                            <p class="item-title">₹${payment.amount} - ${payment.planType}</p>
+                            <p class="item-subtitle">${date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                            <p class="item-meta">${payment.paymentMethod} ${payment.receiptNumber ? `• Receipt: ${payment.receiptNumber}` : ''}</p>
+                        </div>
+                        <div class="item-badge badge-${payment.status}">${payment.status}</div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                document.getElementById('paymentList').innerHTML =
+                    '<p class="error-state">Failed to load payments</p>';
+            }
+        }
+
+        loadPayments();
+    </script>
+</body>
+
+</html>

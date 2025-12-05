@@ -1,0 +1,594 @@
+/* ===================================
+   Ultra Fitness Member PWA - Styles
+   Mobile-First Design
+   =================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #6c5ce7;
+    --primary-dark: #5f3dc4;
+    --success-color: #00b894;
+    --warning-color: #fdcb6e;
+    --danger-color: #d63031;
+    --bg-color: #f5f6fa;
+    --card-bg: #ffffff;
+    --text-primary: #2d3436;
+    --text-secondary: #636e72;
+    --border-color: #dfe6e9;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ===================================
+   Login Page
+   =================================== */
+
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+}
+
+.login-card {
+    background: white;
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo h1 {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.logo p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.login-form .form-group {
+    margin-bottom: 20px;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.login-footer {
+    text-align: center;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.login-footer p {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* ===================================
+   App Container
+   =================================== */
+
+.app-container {
+    min-height: 100vh;
+    background: var(--bg-color);
+    padding-bottom: 20px;
+}
+
+.app-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.app-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.btn-back {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-icon {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.app-main {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* ===================================
+   Dashboard Cards
+   =================================== */
+
+.member-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.member-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    font-size: 2.5rem;
+}
+
+.member-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.member-id {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.status-card {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+    position: relative;
+}
+
+.status-card.card-expired {
+    border-left: 5px solid var(--danger-color);
+}
+
+.status-card.card-expiring {
+    border-left: 5px solid var(--warning-color);
+}
+
+.status-card.card-active {
+    border-left: 5px solid var(--success-color);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.status-badge.status-active {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.status-expiring {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-badge.status-expired {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.status-card h3 {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.plan-type {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.expiry-countdown {
+    background: var(--bg-color);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.countdown-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 5px;
+}
+
+.expiry-countdown h2 {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin: 10px 0;
+}
+
+.expiry-date {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+/* ===================================
+   Quick Actions
+   =================================== */
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.action-btn {
+    background: white;
+    border-radius: 15px;
+    padding: 25px 15px;
+    text-align: center;
+    text-decoration: none;
+    color: var(--text-primary);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+.action-icon {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.action-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+/* ===================================
+   QR Code Page
+   =================================== */
+
+.qr-container {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.qr-info {
+    margin-bottom: 30px;
+}
+
+.qr-info h2 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+.qr-info p {
+    color: var(--text-secondary);
+}
+
+.qr-code {
+    display: inline-block;
+    padding: 20px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+}
+
+.qr-instructions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px dashed var(--border-color);
+}
+
+.qr-instructions p {
+    font-size: 1rem;
+    margin: 10px 0;
+}
+
+.text-small {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ===================================
+   List Containers
+   =================================== */
+
+.list-container {
+    background: white;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.list-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.list-item:last-child {
+    border-bottom: none;
+}
+
+.item-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--bg-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-right: 15px;
+}
+
+.item-content {
+    flex: 1;
+}
+
+.item-title {
+    font-weight: 600;
+    margin-bottom: 3px;
+}
+
+.item-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.item-meta {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 5px;
+}
+
+.item-badge {
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.badge-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.badge-pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.badge-failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.loading, .empty-state, .error-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+}
+
+/* ===================================
+   Profile / Forms
+   =================================== */
+
+.profile-section {
+    background: white;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.profile-section h3 {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 0.95rem;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* ===================================
+   Buttons
+   =================================== */
+
+.btn-primary, .btn-danger {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+/* ===================================
+   Modal
+   =================================== */
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.modal-content h3 {
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    color: var(--text-secondary);
+}
+
+/* ===================================
+   Error Message
+   =================================== */
+
+.error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 10px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+/* ===================================
+   Responsive
+   =================================== */
+
+@media (max-width: 500px) {
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .expiry-countdown h2 {
+        font-size: 2.5rem;
+    }
+}

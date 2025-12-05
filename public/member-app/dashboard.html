@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#6c5ce7">
+    <title>Dashboard - Ultra Fitness Member</title>
+    <link rel="manifest" href="./manifest.json">
+    <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <h1>Ultra Fitness</h1>
+                <button id="logoutBtn" class="btn-icon">🚪</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="app-main">
+            <!-- Member Info Card -->
+            <div class="member-card">
+                <div class="member-avatar">👤</div>
+                <h2 id="memberName">Loading...</h2>
+                <p id="memberId" class="member-id">U001</p>
+            </div>
+
+            <!-- Plan Status Card -->
+            <div class="status-card" id="statusCard">
+                <div class="status-badge" id="statusBadge">Active</div>
+                <h3>Membership Plan</h3>
+                <p class="plan-type" id="planType">Monthly</p>
+                <div class="expiry-countdown">
+                    <p class="countdown-label">Days Remaining</p>
+                    <h2 id="daysRemaining">--</h2>
+                    <p class="expiry-date">Expires on <span id="expiryDate">--</span></p>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="./qr-code.html" class="action-btn">
+                    <span class="action-icon">📱</span>
+                    <span class="action-label">My QR Code</span>
+                </a>
+                <a href="./attendance.html" class="action-btn">
+                    <span class="action-icon">📅</span>
+                    <span class="action-label">Attendance</span>
+                </a>
+                <a href="./payments.html" class="action-btn">
+                    <span class="action-icon">💳</span>
+                    <span class="action-label">Payments</span>
+                </a>
+                <a href="./profile.html" class="action-btn">
+                    <span class="action-icon">⚙️</span>
+                    <span class="action-label">Settings</span>
+                </a>
+            </div>
+        </main>
+
+        <!-- Force Password Change Modal -->
+        <div id="passwordModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <h3>⚠️ Change Your Password</h3>
+                <p>You must change your password before continuing.</p>
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="currentPwd" required>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="newPwd" minlength="4" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="confirmPwd" minlength="4" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Change Password</button>
+                    <div id="pwdError" class="error-message" style="display: none;"></div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./api.js"></script>
+    <script src="./app.js"></script>
+</body>
+
+</html>
