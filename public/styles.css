@@ -2436,8 +2436,10 @@ body.light-mode #payment-view {
     border-radius: 50%;
     background: #ff4757;
     box-shadow: 0 0 10px #ff4757;
-    border: 2px solid var(--bg-primary); /* Cutout effect */
-    color: transparent; /* Hide number for dot look */
+    border: 2px solid var(--bg-primary);
+    /* Cutout effect */
+    color: transparent;
+    /* Hide number for dot look */
     font-size: 0;
     pointer-events: none;
     opacity: 0;
@@ -2452,9 +2454,20 @@ body.light-mode #payment-view {
 }
 
 @keyframes pulse-red {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 71, 87, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 71, 87, 0); }
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
+    }
+
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 6px rgba(255, 71, 87, 0);
+    }
+
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+    }
 }
 
 .notification-dropdown {
@@ -2462,59 +2475,58 @@ body.light-mode #payment-view {
     top: 70px;
     right: 20px;
     width: 320px;
-    background: rgba(30, 30, 40, 0.95); /* Dark solid base */
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(20, 20, 30, 0.65);
+    /* More transparent for glass effect */
+    backdrop-filter: blur(20px);
+    /* Stronger blur */
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 16px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-    z-index: 2000 !important; /* Force on top of everything */
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    /* Deep shadow + Inner glow */
+    z-index: 2000 !important;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transform: translateY(-10px) scale(0.98);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     overflow: hidden;
 }
 
 .notification-dropdown.show {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 .notification-header {
-    padding: 1rem 1.25rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1.25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(255, 255, 255, 0.03);
 }
 
-.notification-header h3 {
-    margin: 0;
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text-primary);
-}
-
-.clear-all-btn {
-    background: none;
-    border: none;
-    color: var(--text-muted);
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-
-.clear-all-btn:hover {
-    color: var(--primary-color);
-    text-decoration: underline;
-}
+/* ... existing button styles ... */
 
 .notification-list {
     max-height: 350px;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Notification Item Animation */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .notification-item {
@@ -2524,19 +2536,28 @@ body.light-mode #payment-view {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
-}
-
-.notification-item:last-child {
-    border-bottom: none;
+    background: rgba(255, 255, 255, 0.01);
+    animation: slideInRight 0.3s ease-out forwards;
 }
 
 .notification-item:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
 }
 
-.notification-item.success { border-left: 3px solid var(--success-color); }
-.notification-item.error { border-left: 3px solid var(--danger-color); }
-.notification-item.info { border-left: 3px solid var(--primary-color); }
+.notification-item.success {
+    border-left: 3px solid #2ecc71;
+    background: linear-gradient(90deg, rgba(46, 204, 113, 0.1), transparent);
+}
+
+.notification-item.error {
+    border-left: 3px solid #e74c3c;
+    background: linear-gradient(90deg, rgba(231, 76, 60, 0.1), transparent);
+}
+
+.notification-item.info {
+    border-left: 3px solid #3498db;
+    background: linear-gradient(90deg, rgba(52, 152, 219, 0.1), transparent);
+}
 
 .notif-item-header {
     display: flex;
