@@ -61,6 +61,8 @@
 
                 // Generate QR Code
                 const qrData = JSON.stringify({
+                    type: 'ULTRA_FITNESS_MEMBER',
+                    version: '1.0',
                     customerId: customer._id,
                     name: customer.name,
                     membershipStatus: status.text
