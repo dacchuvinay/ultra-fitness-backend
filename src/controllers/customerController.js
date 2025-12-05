@@ -105,7 +105,7 @@ const getCustomer = asyncHandler(async (req, res, next) => {
  * @access  Private
  */
 const createCustomer = asyncHandler(async (req, res, next) => {
-    const { name, age, email, phone, plan, notes, photo, validity } = req.body;
+    const { name, age, email, phone, plan, notes, photo, validity, memberId, password, isFirstLogin } = req.body;
 
     // Calculate validity if not provided
     let validityDate = validity;
@@ -122,6 +122,9 @@ const createCustomer = asyncHandler(async (req, res, next) => {
         validity: validityDate,
         notes,
         photo,
+        memberId,
+        password,
+        isFirstLogin,
         createdBy: req.user.id,
     });
 
