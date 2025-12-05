@@ -88,6 +88,39 @@ const createPayment = asyncHandler(async (req, res, next) => {
         return next(new AppError('Customer not found', 404));
     }
 
+    // Calculate new validity
+    let startDate = new Date(paymentDate || new Date());
+    const currentValidity = new Date(customer.validity);
+    const today = new Date();
+
+    // If customer is currently active (validity > today), extend from current validity
+    if (currentValidity > today) {
+        startDate = currentValidity;
+    }
+
+    const endDate = new Date(startDate);
+    switch (planType) {
+        case 'Monthly':
+            endDate.setMonth(endDate.getMonth() + 1);
+            break;
+        case 'Quarterly':
+            endDate.setMonth(endDate.getMonth() + 3);
+            break;
+        case 'Half-Yearly':
+            endDate.setMonth(endDate.getMonth() + 6);
+            break;
+        case 'Yearly':
+            endDate.setMonth(endDate.getMonth() + 12);
+            break;
+        default:
+            endDate.setMonth(endDate.getMonth() + 1); // Default to monthly
+    }
+
+    // Update customer plan and validity
+    customer.plan = planType;
+    customer.validity = endDate;
+    await customer.save();
+
     // Create payment
     const payment = await Payment.create({
         customerId,
@@ -107,11 +140,15 @@ const createPayment = asyncHandler(async (req, res, next) => {
         const { getIO } = require('../config/socket');
         const io = getIO();
         io.emit('payment:new', payment);
+        io.emit('customer:updated', customer);
     } catch (error) {
         console.error('Socket emit error:', error.message);
     }
 
-    sendSuccess(res, 201, { payment }, 'Payment recorded successfully');
+    // Convert customer to plain object to ensure all fields are sent
+    const customerData = customer.toObject();
+
+    sendSuccess(res, 201, { payment, customer: customerData }, 'Payment recorded and plan updated successfully');
 });
 
 /**
