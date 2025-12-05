@@ -2446,9 +2446,13 @@ class GymApp {
             btn.className = 'notification-bell-btn';
             btn.title = 'Notifications';
             btn.innerHTML = `
-                <span style="font-size: 1.2em;">🔔</span>
-                <span class="notification-badge hide" id="notif-badge">0</span>
-            `;
+            btn.innerHTML = `
+                < svg xmlns = "http://www.w3.org/2000/svg" viewBox = "0 0 24 24" fill = "none" stroke = "currentColor" stroke - width="2" stroke - linecap="round" stroke - linejoin="round" >
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg >
+            <div class="notification-badge hide" id="notif-badge"></div>
+        `;
             btn.onclick = (e) => {
                 e.stopPropagation();
                 this.toggleNotificationDropdown();
@@ -2462,14 +2466,14 @@ class GymApp {
             dropdown.id = 'notification-dropdown';
             dropdown.className = 'notification-dropdown';
             dropdown.innerHTML = `
-                <div class="notification-header">
+            < div class="notification-header" >
                     <h3>Notifications</h3>
                     <button class="clear-all-btn" onclick="app.clearNotifications()">Clear All</button>
-                </div>
-                <div class="notification-list" id="notification-list">
-                    <div class="empty-notif">No new notifications</div>
-                </div>
-            `;
+                </div >
+            <div class="notification-list" id="notification-list">
+                <div class="empty-notif">No new notifications</div>
+            </div>
+        `;
 
             // Close dropdown when clicking outside
             document.addEventListener('click', (e) => {
@@ -2523,14 +2527,14 @@ class GymApp {
         }
 
         list.innerHTML = this.notifications.map(n => `
-            <div class="notification-item ${n.type}">
+            < div class="notification-item ${n.type}" >
                 <div class="notif-item-header">
                     <span>${n.title}</span>
                     <span class="notif-time">${n.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
                 <div class="notif-message">${n.message}</div>
-            </div>
-        `).join('');
+            </div >
+            `).join('');
     }
 
     clearNotifications() {
