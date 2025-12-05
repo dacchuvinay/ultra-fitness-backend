@@ -2536,9 +2536,6 @@ class GymApp {
             this.notifications = [];
             this.updateNotificationUI();
         }
-    } else {
-    attendanceBtn.querySelector('.menu-text').textContent = 'Attendance';
-}
     }
 }
 
