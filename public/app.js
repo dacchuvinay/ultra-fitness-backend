@@ -432,7 +432,8 @@ class GymApp {
                 <strong>Password:</strong> ${password}<br><br>
                 <em>Please share these with the member.</em>
             `;
-            this.showNotification('success', 'Customer Added', msg);
+            // Use persistent notification
+            this.addHistoryNotification('success', 'Customer Added', msg);
 
             this.render();
         } catch (error) {
