@@ -1898,7 +1898,21 @@ class GymApp {
                     <div>
                         ${photoHtml}
                         <h3 class="customer-name">${this.escapeHtml(customer.name)}</h3>
+                        <div class="member-id-badge" style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; font-size: 0.85em; display: inline-block; margin-top: 4px;">
+                            ID: ${customer.memberId || 'Pending'}
+                        </div>
                         <span class="customer-status ${statusClass}">${statusText}</span>
+
+                        ${customer.tempPassword ? `
+                            <div class="temp-password-box" style="background: rgba(46, 213, 115, 0.15); border: 1px dashed #2ed573; border-radius: 8px; padding: 10px; margin: 12px 0; text-align: center;">
+                                <div style="color: #2ed573; font-weight: bold; font-size: 1.1em; margin-bottom: 4px;">
+                                    🔑 Password: ${customer.tempPassword}
+                                </div>
+                                <div style="font-size: 0.75em; opacity: 0.8; color: var(--text-secondary);">
+                                    (Shown once - Share with member now)
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
                 </div>
                 <div class="customer-details">
