@@ -2526,13 +2526,13 @@ class GymApp {
         }
 
         list.innerHTML = this.notifications.map(n => `
-            < div class="notification-item ${n.type}" >
+            <div class="notification-item ${n.type}">
                 <div class="notif-item-header">
                     <span>${n.title}</span>
                     <span class="notif-time">${n.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
                 <div class="notif-message">${n.message}</div>
-            </div >
+            </div>
             `).join('');
     }
 
