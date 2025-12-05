@@ -11,8 +11,25 @@ const mongoSanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 
-// Security middleware
-app.use(helmet());
+// CORS configuration - MUST be before helmet
+app.use(cors({
+    origin: true, // Allow all origins (including file://)
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range'],
+    maxAge: 600 // Cache preflight response for 10 minutes
+}));
+
+// Handle preflight requests explicitly
+app.options('*', cors());
+
+// Security middleware - configured to work with CORS
+app.use(helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+    crossOriginEmbedderPolicy: false
+}));
 
 // Data sanitization against NoSQL query injection
 app.use(mongoSanitize());
@@ -22,12 +39,6 @@ app.use(xss());
 
 // Prevent parameter pollution
 app.use(hpp());
-
-// CORS configuration
-app.use(cors({
-    origin: true, // Allow all origins (including file://)
-    credentials: true,
-}));
 
 // Rate limiting
 const limiter = rateLimit({
