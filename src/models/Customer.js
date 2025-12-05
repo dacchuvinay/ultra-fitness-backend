@@ -139,15 +139,30 @@ customerSchema.methods.comparePassword = async function (candidatePassword) {
     }
 };
 
-// Generate unique customer ID before saving
+// Generate unique customer ID and Member ID before saving
 customerSchema.pre('save', async function (next) {
     if (!this.isNew) {
         return next();
     }
 
     try {
-        // Generate ID: cust_timestamp_random
+        // Generate internal customerId
         this.customerId = 'cust_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+
+        // Auto-generate Member ID (U001, U002, etc.) if not provided
+        if (!this.memberId) {
+            const lastCustomer = await this.constructor.findOne({
+                memberId: { $regex: /^U\d+$/ }
+            }).sort({ memberId: -1 });
+
+            if (lastCustomer && lastCustomer.memberId) {
+                const lastId = parseInt(lastCustomer.memberId.replace('U', ''));
+                this.memberId = 'U' + String(lastId + 1).padStart(3, '0');
+            } else {
+                this.memberId = 'U001';
+            }
+        }
+
         next();
     } catch (error) {
         next(error);
