@@ -80,6 +80,10 @@ class GymApp {
         this.api.token = null;
         this.isAuthenticated = false;
 
+        // Initialize Notification Store
+        this.notifications = [];
+        this.injectNotificationCenter();
+
         // Always show login screen on page load
         this.setupLoginListeners();
         document.getElementById('login-overlay').classList.remove('hidden');
@@ -2418,9 +2422,123 @@ class GymApp {
 
         if (this.currentView === 'attendance') {
             attendanceBtn.querySelector('.menu-text').textContent = 'List View';
-        } else {
-            attendanceBtn.querySelector('.menu-text').textContent = 'Attendance';
         }
+
+        // --- Notification Center Methods ---
+
+        injectNotificationCenter() {
+            const performInjection = () => {
+                const headerActions = document.querySelector('.header-actions');
+                if (!headerActions) {
+                    console.warn('GymApp: Header actions container not found! Retrying in 1s...');
+                    setTimeout(performInjection, 1000);
+                    return;
+                }
+
+                if (document.getElementById('notification-bell-btn')) return;
+
+                console.log('GymApp: Injecting Notification Bell...');
+
+                // Create Bell Button
+                const btn = document.createElement('button');
+                btn.id = 'notification-bell-btn';
+                btn.className = 'notification-bell-btn';
+                btn.title = 'Notifications';
+                btn.innerHTML = `
+                <span style="font-size: 1.2em;">🔔</span>
+                <span class="notification-badge hide" id="notif-badge">0</span>
+            `;
+                btn.onclick = (e) => {
+                    e.stopPropagation();
+                    this.toggleNotificationDropdown();
+                };
+
+                // Insert before Hamburger
+                headerActions.insertBefore(btn, headerActions.firstChild);
+
+                // Create Dropdown Container
+                const dropdown = document.createElement('div');
+                dropdown.id = 'notification-dropdown';
+                dropdown.className = 'notification-dropdown';
+                dropdown.innerHTML = `
+                <div class="notification-header">
+                    <h3>Notifications</h3>
+                    <button class="clear-all-btn" onclick="app.clearNotifications()">Clear All</button>
+                </div>
+                <div class="notification-list" id="notification-list">
+                    <div class="empty-notif">No new notifications</div>
+                </div>
+            `;
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!dropdown.contains(e.target) && !btn.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+
+                document.body.appendChild(dropdown);
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', performInjection);
+            } else {
+                performInjection();
+            }
+        }
+
+        toggleNotificationDropdown() {
+            const dropdown = document.getElementById('notification-dropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+        }
+
+        addHistoryNotification(type, title, message) {
+            if (!this.notifications) this.notifications = [];
+            this.notifications.unshift({ type, title, message, time: new Date() });
+            this.updateNotificationUI();
+            this.showNotification(type, title, message);
+        }
+
+        updateNotificationUI() {
+            const badge = document.getElementById('notif-badge');
+            const list = document.getElementById('notification-list');
+            if (!badge || !list) return;
+
+            const count = this.notifications.length;
+            badge.textContent = count;
+            if (count > 0) {
+                badge.classList.remove('hide');
+                badge.classList.add('show');
+            } else {
+                badge.classList.remove('show');
+                badge.classList.add('hide');
+            }
+
+            if (count === 0) {
+                list.innerHTML = '<div class="empty-notif">No new notifications</div>';
+                return;
+            }
+
+            list.innerHTML = this.notifications.map(n => `
+            <div class="notification-item ${n.type}">
+                <div class="notif-item-header">
+                    <span>${n.title}</span>
+                    <span class="notif-time">${n.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+                <div class="notif-message">${n.message}</div>
+            </div>
+        `).join('');
+        }
+
+        clearNotifications() {
+            this.notifications = [];
+            this.updateNotificationUI();
+        }
+    } else {
+    attendanceBtn.querySelector('.menu-text').textContent = 'Attendance';
+}
     }
 }
 
