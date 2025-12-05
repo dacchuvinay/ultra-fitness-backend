@@ -2537,7 +2537,6 @@ class GymApp {
             this.updateNotificationUI();
         }
     }
-}
 
 // Global functions for modal controls
 function openCustomerModal(customerId = null) {
