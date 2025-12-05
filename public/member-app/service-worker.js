@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ultra-fitness-member-v1';
+const CACHE_NAME = 'ultra-fitness-member-v2';
 const urlsToCache = [
     './',
     './index.html',
@@ -40,6 +40,11 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
+    // IGNORE API REQUESTS (Always go to network)
+    if (event.request.url.includes('/api/')) {
+        return; // Fallback to browser default (network)
+    }
+
     event.respondWith(
         caches.match(event.request)
             .then((response) => {
