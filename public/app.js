@@ -1769,7 +1769,7 @@ class GymApp {
             XLSX.utils.book_append_sheet(wb, ws, "Attendance");
 
             const dateStr = new Date().toISOString().split('T')[0];
-            const fileName = `UltraFitness_Attendance_${ dateStr }.xlsx`;
+            const fileName = `UltraFitness_Attendance_${dateStr}.xlsx`;
 
             XLSX.writeFile(wb, fileName);
 
@@ -1897,7 +1897,7 @@ class GymApp {
 
         } catch (error) {
             console.error('Error loading analytics:', error);
-            this.showNotification('error', 'Analytics Error', `Failed to load analytics data: ${ error.message } `);
+            this.showNotification('error', 'Analytics Error', `Failed to load analytics data: ${error.message} `);
         }
     }
 
@@ -1912,7 +1912,7 @@ class GymApp {
             statusText = 'Active';
             statusClass = 'active';
         } else if (status === 'expiring') {
-            statusText = `${ daysRemaining } days left`;
+            statusText = `${daysRemaining} days left`;
             statusClass = 'expiring';
         } else {
             statusText = 'Expired';
@@ -1925,12 +1925,15 @@ class GymApp {
             year: 'numeric'
         });
 
+        // Safe check for memberId
+        const memberIdDisplay = customer.memberId || 'Pending';
+
         const photoHtml = customer.photo
-            ? `< img src = "${customer.photo}" alt = "${this.escapeHtml(customer.name)}" class="customer-photo" onclick = "app.openImageModal({photo: '${customer.photo}', customerId: '${customer.id}'}, 'customer')" > `
-            : `< div class="customer-photo-placeholder" >👤</div > `;
+            ? `<img src="${customer.photo}" alt="${this.escapeHtml(customer.name)}" class="customer-photo" onclick="app.openImageModal({photo: '${customer.photo}', customerId: '${customer.id}'}, 'customer')">`
+            : `<div class="customer-photo-placeholder">👤</div>`;
 
         return `
-            < div class="customer-card ${statusClass}" >
+            <div class="customer-card ${statusClass}">
                 <button class="customer-qr-btn" onclick="app.openQRModal('${customer.id}')" title="View QR Code">
                     📱
                 </button>
@@ -1939,7 +1942,7 @@ class GymApp {
                         ${photoHtml}
                         <h3 class="customer-name">${this.escapeHtml(customer.name)}</h3>
                         <div class="member-id-badge" style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; font-size: 0.85em; display: inline-block; margin-top: 4px;">
-                            ID: ${customer.memberId || 'Pending'}
+                            ID: ${memberIdDisplay}
                         </div>
                         <span class="customer-status ${statusClass}">${statusText}</span>
 
@@ -1962,7 +1965,7 @@ class GymApp {
                     </div>
                     <div class="customer-detail">
                         <span class="detail-icon">📧</span>
-                        <span>${this.escapeHtml(customer.email)}</span>
+                        <span class="text-truncate" title="${this.escapeHtml(customer.email)}">${this.escapeHtml(customer.email)}</span>
                     </div>
                     <div class="customer-detail">
                         <span class="detail-icon">📱</span>
@@ -1997,8 +2000,8 @@ class GymApp {
                         Delete
                     </button>
                 </div>
-            </div >
-            `;
+            </div>
+        `;
     }
 
     escapeHtml(text) {
@@ -2028,7 +2031,7 @@ class GymApp {
 
         const modal = document.getElementById('qr-modal');
         document.getElementById('qr-customer-name').textContent = customer.name;
-        document.getElementById('qr-customer-plan').textContent = `${ customer.plan } Plan`;
+        document.getElementById('qr-customer-plan').textContent = `${customer.plan} Plan`;
 
         // Clear previous QR code
         const container = document.getElementById('qr-code-container');
@@ -2061,10 +2064,10 @@ class GymApp {
         const canvas = document.querySelector('#qr-code-container canvas');
         if (canvas) {
             const link = document.createElement('a');
-            link.download = `${ customerName.replace(/\s+/g, '_') } _QR_Code.png`;
+            link.download = `${customerName.replace(/\s+/g, '_')} _QR_Code.png`;
             link.href = canvas.toDataURL();
             link.click();
-            this.showNotification('success', 'QR Code Downloaded', `QR code for ${ customerName } has been downloaded`);
+            this.showNotification('success', 'QR Code Downloaded', `QR code for ${customerName} has been downloaded`);
         }
     }
 
@@ -2289,7 +2292,7 @@ class GymApp {
 
     showVisualFeedback(type) {
         const flash = document.createElement('div');
-        flash.className = `beep - flash ${ type } `;
+        flash.className = `beep - flash ${type} `;
         document.body.appendChild(flash);
 
         setTimeout(() => {
@@ -2300,10 +2303,10 @@ class GymApp {
     showAttendanceSuccess(customer, time, status) {
         const modal = document.getElementById('attendance-success-modal');
         document.getElementById('attendance-member-name').textContent = customer.name;
-        document.getElementById('attendance-time').textContent = `Checked in at ${ time } `;
+        document.getElementById('attendance-time').textContent = `Checked in at ${time} `;
 
         const badge = document.getElementById('attendance-status-badge');
-        badge.className = `attendance - status - badge ${ status } `;
+        badge.className = `attendance - status - badge ${status} `;
         badge.textContent = status === 'expired' ? 'EXPIRED MEMBERSHIP' :
             status === 'expiring' ? 'EXPIRING SOON' : 'ACTIVE MEMBER';
 
@@ -2312,7 +2315,7 @@ class GymApp {
             message.textContent = '⚠️ Please renew membership at the front desk';
         } else if (status === 'expiring') {
             const daysLeft = customer.getDaysRemaining();
-            message.textContent = `⏰ Membership expires in ${ daysLeft } days`;
+            message.textContent = `⏰ Membership expires in ${daysLeft} days`;
         } else {
             message.textContent = '✅ Have a great workout!';
         }
@@ -2421,7 +2424,7 @@ class GymApp {
 
             // Generate filename with date
             const dateStr = new Date().toISOString().split('T')[0];
-            const fileName = `UltraFitness_Attendance_${ dateStr }.xlsx`;
+            const fileName = `UltraFitness_Attendance_${dateStr}.xlsx`;
 
             // Save file
             XLSX.writeFile(wb, fileName);
