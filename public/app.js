@@ -556,7 +556,8 @@ class GymApp {
 
             if (errors && errors.length > 0) {
                 console.error('Email errors:', errors);
-                this.showNotification('warning', 'Some Failures', `Failed to send ${errors.length} emails. Check console.`);
+                const firstError = errors[0].error || 'Unknown error';
+                this.showNotification('error', 'Sending Failed', `Error: ${firstError}`);
             }
         } catch (error) {
             console.error('Failed to send emails:', error);
