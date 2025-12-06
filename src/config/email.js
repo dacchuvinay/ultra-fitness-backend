@@ -3,7 +3,9 @@ const logger = require('./logger');
 
 // Create transporter
 const transporter = nodemailer.createTransport({
-    service: 'gmail', // Auto-sets host=smtp.gmail.com, port=465, secure=true
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // Use STARTTLS
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
@@ -12,7 +14,7 @@ const transporter = nodemailer.createTransport({
     connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 10000,
-    dnsTimeout: 5000, // Add DNS timeout
+    dnsTimeout: 5000,
     family: 4, // Force IPv4
     logger: true,
     debug: true,
