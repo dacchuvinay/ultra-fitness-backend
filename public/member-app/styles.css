@@ -868,10 +868,10 @@ body {
 }
 
 /* ===================================
-   Photo Upload Styles
+   Photo Display Styles (Read-Only)
    =================================== */
 
-.photo-upload-container {
+.photo-display-container {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -893,15 +893,6 @@ body {
 
 .photo-placeholder {
     font-size: 3rem;
-    color: var(--text-secondary);
-}
-
-.photo-upload-actions {
-    text-align: center;
-}
-
-.photo-upload-actions .text-small {
-    margin-top: 10px;
     color: var(--text-secondary);
 }
 

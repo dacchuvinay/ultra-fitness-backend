@@ -70,18 +70,17 @@ const getMemberProfile = asyncHandler(async (req, res, next) => {
  * @access  Private (Member)
  */
 const updateMemberProfile = asyncHandler(async (req, res, next) => {
-    const { name, phone, email, photo } = req.body;
+    const { name, phone, email } = req.body;
 
     const customer = await Customer.findById(req.user.id);
     if (!customer) {
         return next(new AppError('Member not found', 404));
     }
 
-    // Update allowed fields only
+    // Update allowed fields only (photo is managed by admin)
     if (name) customer.name = name;
     if (phone) customer.phone = phone;
     if (email) customer.email = email;
-    if (photo) customer.photo = photo;
 
     await customer.save();
 

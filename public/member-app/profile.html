@@ -19,18 +19,16 @@
         </header>
 
         <main class="app-main">
-            <!-- Profile Photo Section -->
+            <!-- Profile Photo Display (Read-Only) -->
             <div class="profile-section fade-in">
                 <h3>📸 Profile Photo</h3>
-                <div class="photo-upload-container">
+                <div class="photo-display-container">
                     <div class="photo-preview" id="photoPreview">
                         <div class="photo-placeholder">👤</div>
                     </div>
-                    <div class="photo-upload-actions">
-                        <input type="file" id="photoInput" accept="image/*" style="display: none;">
-                        <button class="btn-primary" id="uploadPhotoBtn">Upload Photo</button>
-                        <p class="text-small">Max size: 5MB • JPG, PNG</p>
-                    </div>
+                    <p class="text-small" style="text-align: center; color: var(--text-secondary); margin-top: 10px;">
+                        Contact admin to update your profile photo
+                    </p>
                 </div>
             </div>
 
@@ -97,7 +95,7 @@
             document.getElementById('email').value = currentProfile.email;
             document.getElementById('phone').value = currentProfile.phone;
 
-            // Load photo
+            // Display photo (read-only)
             const photoPreview = document.getElementById('photoPreview');
             if (currentProfile.photo) {
                 photoPreview.innerHTML = `<img src="${currentProfile.photo}" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
@@ -106,66 +104,7 @@
             }
         }
 
-        // Photo upload
-        document.getElementById('uploadPhotoBtn').addEventListener('click', () => {
-            document.getElementById('photoInput').click();
-        });
-
-        document.getElementById('photoInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            // Validate file size (5MB max)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('File size must be less than 5MB');
-                return;
-            }
-
-            // Validate file type
-            if (!file.type.startsWith('image/')) {
-                alert('Please select an image file');
-                return;
-            }
-
-            // Show preview immediately
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const photoPreview = document.getElementById('photoPreview');
-                photoPreview.innerHTML = `<img src="${e.target.result}" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
-            };
-            reader.readAsDataURL(file);
-
-            // Upload to server
-            try {
-                const uploadBtn = document.getElementById('uploadPhotoBtn');
-                uploadBtn.textContent = 'Uploading...';
-                uploadBtn.disabled = true;
-
-                const response = await api.uploadPhoto(file);
-
-                // Update profile with new photo URL
-                await api.updateProfile({
-                    name: currentProfile.name,
-                    email: currentProfile.email,
-                    phone: currentProfile.phone,
-                    photo: response.data.photoUrl
-                });
-
-                uploadBtn.textContent = 'Upload Photo';
-                uploadBtn.disabled = false;
-                alert('Photo updated successfully!');
-
-                // Reload profile to get updated data
-                await loadProfile();
-            } catch (error) {
-                const uploadBtn = document.getElementById('uploadPhotoBtn');
-                uploadBtn.textContent = 'Upload Photo';
-                uploadBtn.disabled = false;
-                alert('Failed to upload photo: ' + error.message);
-            }
-        });
-
-        // Profile form
+        // Profile form (without photo)
         document.getElementById('profileForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
