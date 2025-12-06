@@ -314,7 +314,7 @@ class GymApp {
                 c.email,
                 c.phone,
                 c.plan,
-                c.validity.split('T')[0], // Ensure YYYY-MM-DD
+                c.validity ? c.validity.split('T')[0] : new Date().toISOString().split('T')[0], // Safety check
                 c.notes,
                 c.photo || '',
                 new Date(c.createdAt),
