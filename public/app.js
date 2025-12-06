@@ -1663,6 +1663,17 @@ class GymApp {
             const response = await this.api.getAttendance(dateFilter ? { date: dateFilter } : {});
             let attendance = response.data.attendance;
 
+            // --- DAILY FILTER IMPLEMENTATION ---
+            // Unless the user explicitly selected a date filter, show ONLY today's records.
+            if (!dateFilter) {
+                const todayStr = new Date().toLocaleDateString('en-IN');
+                attendance = attendance.filter(record => {
+                    const recordDate = new Date(record.timestamp).toLocaleDateString('en-IN');
+                    return recordDate === todayStr;
+                });
+            }
+            // -----------------------------------
+
             // Update stats - fetch today's stats specifically
             const statsResponse = await this.api.getAttendanceStats(today);
             const stats = statsResponse.data;
@@ -1679,6 +1690,11 @@ class GymApp {
             if (attendance.length === 0) {
                 container.innerHTML = '';
                 emptyState.style.display = 'flex';
+                // Update message if filtered
+                if (!dateFilter) {
+                    emptyState.querySelector('h3').textContent = "No Check-ins Today";
+                    emptyState.querySelector('p').textContent = "Attendance records will appear here as members check in.";
+                }
                 return;
             }
 

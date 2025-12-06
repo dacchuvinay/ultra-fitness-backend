@@ -2118,13 +2118,15 @@ body.light-mode .ios-select:hover {
     color: var(--success-color);
 }
 
-.status-badge.status-pending {
-    background: var(--warning-light);
-    color: var(--warning-color);
+.status-badge.status-failed {
+    background: var(--danger-light);
+    color: var(--danger-color);
 }
 
-color: var(--text-primary);
-transform: scale(1.1);
+.btn-icon:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    transform: scale(1.1);
 }
 
 .empty-state {
