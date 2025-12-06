@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#6c5ce7">
     <title>Dashboard - Ultra Fitness Member</title>
     <link rel="manifest" href="./manifest.json">
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles.css?v=4.1">
 </head>
 
 <body>
@@ -93,6 +93,19 @@
 
     <script src="./api.js"></script>
     <script src="./app.js"></script>
+
+    <!-- Force cache refresh on mobile -->
+    <script>
+        // Unregister old service worker and reload if version mismatch
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function (registrations) {
+                for (let registration of registrations) {
+                    // Check if we need to update
+                    registration.update();
+                }
+            });
+        }
+    </script>
 </body>
 
 </html>
