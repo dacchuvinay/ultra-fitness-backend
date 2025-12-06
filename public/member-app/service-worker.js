@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ultra-fitness-member-v3';
+const CACHE_NAME = 'ultra-fitness-member-v4';
 const urlsToCache = [
     './',
     './index.html',
@@ -7,6 +7,7 @@ const urlsToCache = [
     './attendance.html',
     './payments.html',
     './profile.html',
+    './bmi-calculator.html',
     './styles.css',
     './app.js',
     './api.js',
