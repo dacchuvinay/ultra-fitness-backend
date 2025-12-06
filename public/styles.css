@@ -2123,26 +2123,8 @@ body.light-mode .ios-select:hover {
     color: var(--warning-color);
 }
 
-.status-badge.status-failed {
-    background: var(--danger-light);
-    color: var(--danger-color);
-}
-
-.btn-icon {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    color: var(--text-muted);
-    transition: all var(--transition-base);
-    border-radius: var(--radius-sm);
-}
-
-.btn-icon:hover {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    transform: scale(1.1);
+color: var(--text-primary);
+transform: scale(1.1);
 }
 
 .empty-state {
