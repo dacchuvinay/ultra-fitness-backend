@@ -136,12 +136,26 @@ class GymApp {
                 const loaderEl = document.createElement('div');
                 loaderEl.id = 'global-loader';
                 loaderEl.className = 'global-loader';
-                // Use Lottie for loading
+                // CSS Loader replacement for broken Lottie
                 loaderEl.innerHTML = `
-                    <div class="lottie-loader" style="width: 200px; height: 200px;">
-                        <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_a2chheio.json"  background="transparent"  speed="1"  style="width: 100%; height: 100%;"  loop  autoplay></lottie-player>
-                    </div>
-                `;
+                <div class="spinner-container">
+                    <div class="spinner"></div>
+                    <style>
+                        .spinner-container { display: flex; justify-content: center; align-items: center; }
+                        .spinner {
+                            width: 60px;
+                            height: 60px;
+                            border: 5px solid rgba(255, 255, 255, 0.1);
+                            border-radius: 50%;
+                            border-top-color: #4ECDC4;
+                            animation: spin 1s ease-in-out infinite;
+                        }
+                        @keyframes spin {
+                            to { transform: rotate(360deg); }
+                        }
+                    </style>
+                </div>
+            `;
                 loaderEl.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px); z-index: 9999; display: flex; justify-content: center; align-items: center;';
                 document.body.appendChild(loaderEl);
             } else {
@@ -778,7 +792,14 @@ class GymApp {
         tbody.innerHTML = '';
 
         if (payments.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No payments found</td></tr>';
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 40px;">
+                        <div style="font-size: 60px; margin-bottom: 10px;">🧾</div>
+                        <div style="color: #888;">No payments found</div>
+                    </td>
+                </tr>
+            `;
             return;
         }
 
@@ -1524,11 +1545,9 @@ class GymApp {
 
         if (customers.length === 0) {
             container.innerHTML = '';
-            // Use Lottie for empty state
+            // CSS/HTML for empty state (replacement for broken Lottie)
             emptyState.innerHTML = `
-                <div class="lottie-empty" style="width: 300px; height: 300px; margin: 0 auto;">
-                    <lottie-player src="https://assets9.lottiefiles.com/packages/lf20_s8pbrcfw.json"  background="transparent"  speed="1"  style="width: 100%; height: 100%;"  loop  autoplay></lottie-player>
-                </div>
+                <div class="empty-state-icon" style="font-size: 80px; margin-bottom: 20px;">📂</div>
                 <h2>No Customers Found</h2>
                 <p>Start by adding your first customer to the system</p>
                 <button class="btn btn-primary" onclick="app.openCustomerModal()">
@@ -1750,7 +1769,7 @@ class GymApp {
             XLSX.utils.book_append_sheet(wb, ws, "Attendance");
 
             const dateStr = new Date().toISOString().split('T')[0];
-            const fileName = `UltraFitness_Attendance_${dateStr}.xlsx`;
+            const fileName = `UltraFitness_Attendance_${ dateStr }.xlsx`;
 
             XLSX.writeFile(wb, fileName);
 
@@ -1878,7 +1897,7 @@ class GymApp {
 
         } catch (error) {
             console.error('Error loading analytics:', error);
-            this.showNotification('error', 'Analytics Error', `Failed to load analytics data: ${error.message}`);
+            this.showNotification('error', 'Analytics Error', `Failed to load analytics data: ${ error.message } `);
         }
     }
 
@@ -1893,7 +1912,7 @@ class GymApp {
             statusText = 'Active';
             statusClass = 'active';
         } else if (status === 'expiring') {
-            statusText = `${daysRemaining} days left`;
+            statusText = `${ daysRemaining } days left`;
             statusClass = 'expiring';
         } else {
             statusText = 'Expired';
@@ -1907,11 +1926,11 @@ class GymApp {
         });
 
         const photoHtml = customer.photo
-            ? `<img src="${customer.photo}" alt="${this.escapeHtml(customer.name)}" class="customer-photo" onclick="app.openImageModal({photo: '${customer.photo}', customerId: '${customer.id}'}, 'customer')">`
-            : `<div class="customer-photo-placeholder">👤</div>`;
+            ? `< img src = "${customer.photo}" alt = "${this.escapeHtml(customer.name)}" class="customer-photo" onclick = "app.openImageModal({photo: '${customer.photo}', customerId: '${customer.id}'}, 'customer')" > `
+            : `< div class="customer-photo-placeholder" >👤</div > `;
 
         return `
-            <div class="customer-card ${statusClass}">
+            < div class="customer-card ${statusClass}" >
                 <button class="customer-qr-btn" onclick="app.openQRModal('${customer.id}')" title="View QR Code">
                     📱
                 </button>
@@ -1978,8 +1997,8 @@ class GymApp {
                         Delete
                     </button>
                 </div>
-            </div>
-        `;
+            </div >
+            `;
     }
 
     escapeHtml(text) {
@@ -2009,7 +2028,7 @@ class GymApp {
 
         const modal = document.getElementById('qr-modal');
         document.getElementById('qr-customer-name').textContent = customer.name;
-        document.getElementById('qr-customer-plan').textContent = `${customer.plan} Plan`;
+        document.getElementById('qr-customer-plan').textContent = `${ customer.plan } Plan`;
 
         // Clear previous QR code
         const container = document.getElementById('qr-code-container');
@@ -2042,10 +2061,10 @@ class GymApp {
         const canvas = document.querySelector('#qr-code-container canvas');
         if (canvas) {
             const link = document.createElement('a');
-            link.download = `${customerName.replace(/\s+/g, '_')}_QR_Code.png`;
+            link.download = `${ customerName.replace(/\s+/g, '_') } _QR_Code.png`;
             link.href = canvas.toDataURL();
             link.click();
-            this.showNotification('success', 'QR Code Downloaded', `QR code for ${customerName} has been downloaded`);
+            this.showNotification('success', 'QR Code Downloaded', `QR code for ${ customerName } has been downloaded`);
         }
     }
 
@@ -2270,7 +2289,7 @@ class GymApp {
 
     showVisualFeedback(type) {
         const flash = document.createElement('div');
-        flash.className = `beep-flash ${type}`;
+        flash.className = `beep - flash ${ type } `;
         document.body.appendChild(flash);
 
         setTimeout(() => {
@@ -2281,10 +2300,10 @@ class GymApp {
     showAttendanceSuccess(customer, time, status) {
         const modal = document.getElementById('attendance-success-modal');
         document.getElementById('attendance-member-name').textContent = customer.name;
-        document.getElementById('attendance-time').textContent = `Checked in at ${time}`;
+        document.getElementById('attendance-time').textContent = `Checked in at ${ time } `;
 
         const badge = document.getElementById('attendance-status-badge');
-        badge.className = `attendance-status-badge ${status}`;
+        badge.className = `attendance - status - badge ${ status } `;
         badge.textContent = status === 'expired' ? 'EXPIRED MEMBERSHIP' :
             status === 'expiring' ? 'EXPIRING SOON' : 'ACTIVE MEMBER';
 
@@ -2293,7 +2312,7 @@ class GymApp {
             message.textContent = '⚠️ Please renew membership at the front desk';
         } else if (status === 'expiring') {
             const daysLeft = customer.getDaysRemaining();
-            message.textContent = `⏰ Membership expires in ${daysLeft} days`;
+            message.textContent = `⏰ Membership expires in ${ daysLeft } days`;
         } else {
             message.textContent = '✅ Have a great workout!';
         }
@@ -2354,7 +2373,7 @@ class GymApp {
         });
 
         return `
-            <div class="attendance-record">
+            < div class="attendance-record" >
                 <div class="attendance-record-info">
                     <div class="attendance-record-avatar">${statusIcon}</div>
                     <div class="attendance-record-details">
@@ -2366,8 +2385,8 @@ class GymApp {
                     <div class="attendance-time-badge">${formattedTime}</div>
                     <p style="margin: 0; font-size: 0.875rem; color: var(--text-muted);">${formattedDate}</p>
                 </div>
-            </div>
-        `;
+            </div >
+            `;
     }
 
     async exportAttendance() {
@@ -2402,7 +2421,7 @@ class GymApp {
 
             // Generate filename with date
             const dateStr = new Date().toISOString().split('T')[0];
-            const fileName = `UltraFitness_Attendance_${dateStr}.xlsx`;
+            const fileName = `UltraFitness_Attendance_${ dateStr }.xlsx`;
 
             // Save file
             XLSX.writeFile(wb, fileName);
@@ -2462,12 +2481,12 @@ class GymApp {
             btn.className = 'notification-bell-btn';
             btn.title = 'Notifications';
             btn.innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            < svg xmlns = "http://www.w3.org/2000/svg" viewBox = "0 0 24 24" fill = "none" stroke = "currentColor" stroke - width="2" stroke - linecap="round" stroke - linejoin="round" >
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-                </svg>
-                <div class="notification-badge hide" id="notif-badge"></div>
-            `;
+                </svg >
+            <div class="notification-badge hide" id="notif-badge"></div>
+        `;
             btn.onclick = (e) => {
                 e.stopPropagation();
                 this.toggleNotificationDropdown();
@@ -2481,10 +2500,10 @@ class GymApp {
             dropdown.id = 'notification-dropdown';
             dropdown.className = 'notification-dropdown';
             dropdown.innerHTML = `
-                <div class="notification-header">
+            < div class="notification-header" >
                     <h3>Notifications</h3>
                     <button class="clear-all-btn" onclick="app.clearNotifications()">Clear All</button>
-                </div>
+                </div >
             <div class="notification-list" id="notification-list">
                 <div class="empty-notif">No new notifications</div>
             </div>
@@ -2542,13 +2561,13 @@ class GymApp {
         }
 
         list.innerHTML = this.notifications.map(n => `
-            <div class="notification-item ${n.type}">
+            < div class="notification-item ${n.type}" >
                 <div class="notif-item-header">
                     <span>${n.title}</span>
                     <span class="notif-time">${n.time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
                 <div class="notif-message">${n.message}</div>
-            </div>
+            </div >
             `).join('');
     }
 
