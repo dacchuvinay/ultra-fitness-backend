@@ -545,7 +545,7 @@ class GymApp {
     async notifyExpiredCustomers() {
         try {
             // EmailJS Configuration
-            const SERVICE_ID = 'service_gmail'; 
+            const SERVICE_ID = 'service_j67fzxt';
             const TEMPLATE_ID = 'template_g5eeb74';
             const PUBLIC_KEY = 'cVmdam9uXfxZ-594a';
 
