@@ -68,6 +68,27 @@ const getAttendance = asyncHandler(async (req, res, next) => {
 
     const query = {};
 
+    // --- RETENTION POLICY IMPLEMENTATION ---
+    // Automatically delete records older than 90 days (~3 months)
+    try {
+        const retentionLimitDate = new Date();
+        retentionLimitDate.setDate(retentionLimitDate.getDate() - 90);
+        const retentionLimitStr = getLocalDateString(retentionLimitDate);
+
+        // Delete records strictly OLDER than the limit
+        const result = await Attendance.deleteMany({
+            date: { $lt: retentionLimitStr }
+        });
+
+        if (result.deletedCount > 0) {
+            console.log(`[Retention Policy] Deleted ${result.deletedCount} old attendance records (older than ${retentionLimitStr})`);
+        }
+    } catch (cleanupError) {
+        console.error('[Retention Policy] Cleanup failed (non-critical):', cleanupError);
+        // Continue execution to return current data
+    }
+    // ---------------------------------------
+
     // Filter by date (default to today if no filters provided? No, show all by default or let frontend decide)
     if (date) {
         query.date = date;
