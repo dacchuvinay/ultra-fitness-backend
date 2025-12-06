@@ -546,10 +546,10 @@ class GymApp {
         try {
             this.showNotification('warning', 'Sending Emails...', 'Triggering email notifications...');
             const response = await this.api.sendExpiryEmails();
-            const { count, errors } = response.data;
+            const { sent, errors } = response.data;
 
-            if (count > 0) {
-                this.showNotification('success', 'Emails Sent', `Successfully sent ${count} emails.`);
+            if (sent > 0) {
+                this.showNotification('success', 'Emails Sent', `Successfully sent ${sent} emails.`);
             } else {
                 this.showNotification('info', 'No Emails Sent', 'No expired customers found or emails already sent.');
             }
