@@ -70,7 +70,7 @@ const getMemberProfile = asyncHandler(async (req, res, next) => {
  * @access  Private (Member)
  */
 const updateMemberProfile = asyncHandler(async (req, res, next) => {
-    const { name, phone, email } = req.body;
+    const { name, phone, email, photo } = req.body;
 
     const customer = await Customer.findById(req.user.id);
     if (!customer) {
@@ -81,6 +81,7 @@ const updateMemberProfile = asyncHandler(async (req, res, next) => {
     if (name) customer.name = name;
     if (phone) customer.phone = phone;
     if (email) customer.email = email;
+    if (photo) customer.photo = photo;
 
     await customer.save();
 
