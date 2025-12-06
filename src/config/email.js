@@ -10,6 +10,12 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
     },
+    // Prevent hanging
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
+    logger: true, // Log to console
+    debug: true,  // Include SMTP traffic in logs
 });
 
 // Verify connection configuration
