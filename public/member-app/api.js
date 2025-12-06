@@ -113,4 +113,25 @@ class MemberAPI {
             body: JSON.stringify({ subscription }),
         });
     }
+
+    async uploadPhoto(photoFile) {
+        const formData = new FormData();
+        formData.append('photo', photoFile);
+
+        const url = `${this.baseUrl}/api/upload/photo`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${this.token}`
+            },
+            body: formData
+        });
+
+        if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.message || 'Photo upload failed');
+        }
+
+        return await response.json();
+    }
 }

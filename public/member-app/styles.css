@@ -868,6 +868,44 @@ body {
 }
 
 /* ===================================
+   Photo Upload Styles
+   =================================== */
+
+.photo-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 0;
+}
+
+.photo-preview {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--bg-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.photo-placeholder {
+    font-size: 3rem;
+    color: var(--text-secondary);
+}
+
+.photo-upload-actions {
+    text-align: center;
+}
+
+.photo-upload-actions .text-small {
+    margin-top: 10px;
+    color: var(--text-secondary);
+}
+
+/* ===================================
    Responsive
    =================================== */
 

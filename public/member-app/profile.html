@@ -19,7 +19,23 @@
         </header>
 
         <main class="app-main">
-            <div class="profile-section">
+            <!-- Profile Photo Section -->
+            <div class="profile-section fade-in">
+                <h3>📸 Profile Photo</h3>
+                <div class="photo-upload-container">
+                    <div class="photo-preview" id="photoPreview">
+                        <div class="photo-placeholder">👤</div>
+                    </div>
+                    <div class="photo-upload-actions">
+                        <input type="file" id="photoInput" accept="image/*" style="display: none;">
+                        <button class="btn-primary" id="uploadPhotoBtn">Upload Photo</button>
+                        <p class="text-small">Max size: 5MB • JPG, PNG</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="profile-section fade-in" style="animation-delay: 0.1s;">
                 <h3>Personal Information</h3>
                 <form id="profileForm">
                     <div class="form-group">
@@ -38,7 +54,8 @@
                 </form>
             </div>
 
-            <div class="profile-section">
+            <!-- Change Password -->
+            <div class="profile-section fade-in" style="animation-delay: 0.2s;">
                 <h3>Change Password</h3>
                 <form id="passwordForm">
                     <div class="form-group">
@@ -57,7 +74,8 @@
                 </form>
             </div>
 
-            <div class="profile-section">
+            <!-- Logout -->
+            <div class="profile-section fade-in" style="animation-delay: 0.3s;">
                 <button id="logoutBtn" class="btn-danger">Logout</button>
             </div>
         </main>
@@ -68,14 +86,86 @@
         const api = new MemberAPI();
         if (!api.token) window.location.href = './index.html';
 
+        let currentProfile = null;
+
         async function loadProfile() {
             const response = await api.getProfile();
-            const customer = response.data.customer;
-            document.getElementById('name').value = customer.name;
-            document.getElementById('email').value = customer.email;
-            document.getElementById('phone').value = customer.phone;
+            currentProfile = response.data.customer;
+
+            // Load basic info
+            document.getElementById('name').value = currentProfile.name;
+            document.getElementById('email').value = currentProfile.email;
+            document.getElementById('phone').value = currentProfile.phone;
+
+            // Load photo
+            const photoPreview = document.getElementById('photoPreview');
+            if (currentProfile.photo) {
+                photoPreview.innerHTML = `<img src="${currentProfile.photo}" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            } else {
+                photoPreview.innerHTML = '<div class="photo-placeholder">👤</div>';
+            }
         }
 
+        // Photo upload
+        document.getElementById('uploadPhotoBtn').addEventListener('click', () => {
+            document.getElementById('photoInput').click();
+        });
+
+        document.getElementById('photoInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validate file size (5MB max)
+            if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('Please select an image file');
+                return;
+            }
+
+            // Show preview immediately
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const photoPreview = document.getElementById('photoPreview');
+                photoPreview.innerHTML = `<img src="${e.target.result}" alt="Profile Photo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+            };
+            reader.readAsDataURL(file);
+
+            // Upload to server
+            try {
+                const uploadBtn = document.getElementById('uploadPhotoBtn');
+                uploadBtn.textContent = 'Uploading...';
+                uploadBtn.disabled = true;
+
+                const response = await api.uploadPhoto(file);
+
+                // Update profile with new photo URL
+                await api.updateProfile({
+                    name: currentProfile.name,
+                    email: currentProfile.email,
+                    phone: currentProfile.phone,
+                    photo: response.data.photoUrl
+                });
+
+                uploadBtn.textContent = 'Upload Photo';
+                uploadBtn.disabled = false;
+                alert('Photo updated successfully!');
+
+                // Reload profile to get updated data
+                await loadProfile();
+            } catch (error) {
+                const uploadBtn = document.getElementById('uploadPhotoBtn');
+                uploadBtn.textContent = 'Upload Photo';
+                uploadBtn.disabled = false;
+                alert('Failed to upload photo: ' + error.message);
+            }
+        });
+
+        // Profile form
         document.getElementById('profileForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             try {
@@ -85,11 +175,13 @@
                     phone: document.getElementById('phone').value
                 });
                 alert('Profile updated successfully!');
+                await loadProfile();
             } catch (error) {
                 alert('Failed to update profile: ' + error.message);
             }
         });
 
+        // Password form
         document.getElementById('passwordForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const newPwd = document.getElementById('newPassword').value;
@@ -112,6 +204,7 @@
             }
         });
 
+        // Logout
         document.getElementById('logoutBtn').addEventListener('click', () => {
             if (confirm('Are you sure you want to logout?')) {
                 api.clearToken();

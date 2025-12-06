@@ -19,6 +19,14 @@ async function loadDashboard() {
         document.getElementById('memberId').textContent = memberProfile.memberId;
         document.getElementById('planType').textContent = memberProfile.plan;
 
+        // Update member avatar with photo if available
+        const avatarDiv = document.querySelector('.member-avatar');
+        if (memberProfile.photo) {
+            avatarDiv.innerHTML = `<img src="${memberProfile.photo}" alt="${memberProfile.name}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">`;
+        } else {
+            avatarDiv.innerHTML = '👤';
+        }
+
         // Calculate and display days remaining
         const status = calculateMembershipStatus(memberProfile.validity);
         document.getElementById('daysRemaining').textContent = status.daysRemaining;
