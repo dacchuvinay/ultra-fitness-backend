@@ -9,18 +9,23 @@ const logger = require('../config/logger');
  * @access  Private (Admin/Staff)
  */
 const sendExpiryNotifications = asyncHandler(async (req, res, next) => {
-    // Find expiring customers (validity between today and next 7 days)
+    // Find expiring customers (validity between last 7 days and next 7 days)
+    // This allows re-sending or notifying recently expired members too
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+
     const nextWeek = new Date(today);
     nextWeek.setDate(nextWeek.getDate() + 7);
 
+    const lastWeek = new Date(today);
+    lastWeek.setDate(lastWeek.getDate() - 7);
+
     const expiringCustomers = await Customer.find({
-        validity: { $gte: today, $lte: nextWeek }
+        validity: { $gte: lastWeek, $lte: nextWeek }
     });
 
     if (expiringCustomers.length === 0) {
-        return sendSuccess(res, 200, { sent: 0, failed: 0 }, 'No expiring customers found');
+        return sendSuccess(res, 200, { sent: 0, failed: 0 }, 'No expiring or recently expired customers found');
     }
 
     let sentCount = 0;
@@ -58,7 +63,7 @@ const sendExpiryNotifications = asyncHandler(async (req, res, next) => {
         sent: sentCount,
         failed: failedCount,
         errors: errors.length > 0 ? errors : undefined
-    }, `Processed ${expiringCustomers.length} notifications`);
+    }, `Processed ${expiringCustomers.length} notifications (Expired/Expiring)`);
 });
 
 /**
