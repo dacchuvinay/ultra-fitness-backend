@@ -10,12 +10,14 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
     },
-    // Prevent hanging
-    connectionTimeout: 10000, // 10 seconds
+    // Prevent hanging & Force IPv4 (Fixes Render/Gmail timeouts)
+    connectionTimeout: 10000,
     greetingTimeout: 10000,
     socketTimeout: 10000,
-    logger: true, // Log to console
-    debug: true,  // Include SMTP traffic in logs
+    dnsTimeout: 5000, // Add DNS timeout
+    family: 4, // Force IPv4
+    logger: true,
+    debug: true,
 });
 
 // Verify connection configuration
