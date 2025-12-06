@@ -3,9 +3,7 @@ const logger = require('./logger');
 
 // Create transporter
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: process.env.EMAIL_PORT == 465, // true for 465, false for other ports
+    service: 'gmail', // Auto-sets host=smtp.gmail.com, port=465, secure=true
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
