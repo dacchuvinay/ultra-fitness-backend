@@ -1541,7 +1541,14 @@ class GymApp {
         }
 
         emptyState.classList.remove('show');
-        container.innerHTML = customers.map(customer => this.renderCustomerCard(customer)).join('');
+        container.innerHTML = customers.map(customer => {
+            try {
+                return this.renderCustomerCard(customer);
+            } catch (e) {
+                console.error('Failed to render card for customer:', customer.id, e);
+                return '';
+            }
+        }).join('');
 
         // Attach event listeners to action buttons
         customers.forEach(customer => {
