@@ -115,62 +115,10 @@ class GymApp {
     }
 
     async notifyExpiredCustomers() {
-        const expiredCustomers = this.customers.filter(c => c.getStatus() === 'expired');
-
-        if (expiredCustomers.length === 0) {
-            this.showNotification('info', 'No Expired Plans', 'There are no customers with expired plans.');
-            return;
-        }
-
-        if (!confirm(`Send email reminders to ${expiredCustomers.length} expired customers?`)) {
-            return;
-        }
-
-        this.setLoading(true);
-        let sentCount = 0;
-        let errorCount = 0;
-
-        try {
-            // NOTE: The value 'swqj itpd afsy aakj' provided looks like a Google App Password.
-            // EmailJS requires a Service ID (usually starts with 'service_').
-            // Please replace 'YOUR_SERVICE_ID' below with your actual EmailJS Service ID.
-            const SERVICE_ID = 'service_gmail'; // Common default, change if yours is different
-            const TEMPLATE_ID = 'template_g5eeb74';
-
-            const emailPromises = expiredCustomers.map(customer => {
-                if (!customer.email) return Promise.resolve();
-
-                const templateParams = {
-                    to_name: customer.name,
-                    to_email: customer.email,
-                    plan_name: customer.plan,
-                    expiry_date: new Date(customer.validity).toLocaleDateString(),
-                    gym_name: "Ultra Fitness"
-                };
-
-                return emailjs.send(SERVICE_ID, TEMPLATE_ID, templateParams)
-                    .then(() => sentCount++)
-                    .catch(err => {
-                        console.error(`Failed to email ${customer.name}:`, err);
-                        errorCount++;
-                    });
-            });
-
-            await Promise.all(emailPromises);
-
-            if (sentCount > 0) {
-                this.showNotification('success', 'Emails Sent', `Successfully sent ${sentCount} expiry reminders.`);
-            }
-            if (errorCount > 0) {
-                this.showNotification('warning', 'Some Failures', `Failed to send ${errorCount} emails. Check console.`);
-            }
-
-        } catch (error) {
-            console.error('Email error:', error);
-            this.showNotification('error', 'Email Error', 'Failed to initiate email sending.');
-        } finally {
-            this.setLoading(false);
-        }
+        // Redirect to the new implementation which uses the backend API
+        // This duplicate method is removed to avoid confusion.
+        // utilization of this.notifyExpiredCustomers() at line 597
+        return this.notifyExpiredCustomersImpl(); // Forwarder if needed, or just delete.
     }
 
     // Helper function to get local date string (YYYY-MM-DD) in user's timezone
@@ -356,7 +304,7 @@ class GymApp {
                 `).join('');
             }
 
-            const response = await this.api.getCustomers();
+            const response = await this.api.getCustomers({ limit: 100 });
             const data = response.data.customers;
 
             this.customers = data.map(c => new Customer(
