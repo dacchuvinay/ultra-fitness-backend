@@ -499,6 +499,8 @@ body {
     border: 2px solid var(--border-color);
     border-radius: 10px;
     font-size: 0.95rem;
+    background: var(--bg-color);
+    color: var(--text-primary);
 }
 
 .form-group input:focus {
@@ -720,13 +722,13 @@ body {
 }
 
 .unit-btn.active {
-    background: white;
+    background: var(--card-bg);
     color: var(--primary-color);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .bmi-result-card {
-    background: white;
+    background: var(--card-bg);
     border-radius: 20px;
     padding: 35px 25px;
     text-align: center;
