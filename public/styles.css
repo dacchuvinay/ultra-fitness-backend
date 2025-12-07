@@ -925,6 +925,21 @@ body.light-mode .modal {
     color: var(--text-secondary);
 }
 
+/* Light Mode Notification Fix */
+body.light-mode .notification {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+body.light-mode .notification-title {
+    color: #0f172a;
+}
+
+body.light-mode .notification-message {
+    color: #475569;
+}
+
 /* ===================================
    Responsive Design
    =================================== */

@@ -1283,7 +1283,7 @@ class GymApp {
         try {
             this.showNotification('warning', 'Uploading...', 'Uploading photo...');
             const response = await this.api.uploadPhoto(file);
-            this.currentPhoto = response.data.url; // Assuming backend returns { status: 'success', data: { url: '...' } }
+            this.currentPhoto = response.data.photoUrl; // Backend returns photoUrl from Cloudinary
             this.displayPhoto(this.currentPhoto);
             this.showNotification('success', 'Upload Complete', 'Photo uploaded successfully');
         } catch (error) {
@@ -1334,16 +1334,18 @@ class GymApp {
         try {
             if (this.viewingPhotoCustomerId) {
                 // Delete photo from existing customer
-                const customer = this.customers.find(c => c.id === this.viewingPhotoCustomerId);
+                const customer = this.customers.find(c => c.id === this.viewingPhotoCustomerId || c._id === this.viewingPhotoCustomerId);
                 if (customer && customer.photo) {
-                    // Extract filename from URL
-                    const filename = customer.photo.split('/').pop();
+                    // Extract Cloudinary public_id from URL (format: .../upload/v123456/filename.jpg)
+                    const urlParts = customer.photo.split('/');
+                    const filenamePart = urlParts[urlParts.length - 1];
+                    const publicId = filenamePart.split('.')[0]; // Remove extension
 
                     // Delete from server
-                    await this.api.deletePhoto(filename);
+                    await this.api.deletePhoto(publicId);
 
                     // Update customer record
-                    await this.api.updateCustomer(customer.id, { photo: '' });
+                    await this.api.updateCustomer(customer.id || customer._id, { photo: '' });
 
                     // Update local state
                     customer.photo = '';
@@ -1353,8 +1355,10 @@ class GymApp {
             } else {
                 // Delete current photo being added (orphaned upload)
                 if (this.currentPhoto) {
-                    const filename = this.currentPhoto.split('/').pop();
-                    await this.api.deletePhoto(filename);
+                    const urlParts = this.currentPhoto.split('/');
+                    const filenamePart = urlParts[urlParts.length - 1];
+                    const publicId = filenamePart.split('.')[0];
+                    await this.api.deletePhoto(publicId);
                     this.showNotification('success', 'Photo Removed', 'Photo has been removed');
                 }
                 this.clearPhotoPreview();
