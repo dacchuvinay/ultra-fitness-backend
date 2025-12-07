@@ -100,10 +100,37 @@ class GymApp {
             this.setupEventListeners();
             this.checkExpiringPlans();
             this.render();
+            this.setupAnalyticsListener(); // Fix analytics button
         } catch (error) {
             console.error('Failed to initialize app:', error);
             this.showNotification('error', 'Error', `Failed to load application: ${error.message}`);
         }
+    }
+
+    setupAnalyticsListener() {
+        // Explicitly handle analytics button to prevent double-click issues
+        setTimeout(() => {
+            const btn = document.getElementById('menu-analytics-btn');
+            if (btn) {
+                // Remove existing listeners by cloning
+                const newBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(newBtn, btn);
+
+                newBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Force toggle based on current state
+                    if (this.currentView === 'analytics') {
+                        this.toggleView('list');
+                    } else {
+                        this.toggleView('analytics');
+                    }
+
+                    this.closeHamburgerMenu();
+                });
+            }
+        }, 1500); // Wait for DOM
     }
 
     checkExpiringPlans() {
@@ -1589,43 +1616,47 @@ class GymApp {
         });
     }
 
-    toggleView() {
+    toggleView(targetView = null) {
         const listSection = document.querySelector('.customer-list-section');
         const controlsSection = document.querySelector('.controls-section');
         const dashboardSection = document.getElementById('analytics-dashboard');
+        const attendanceSection = document.getElementById('attendance-dashboard');
 
-        if (this.currentView === 'list') {
-            // Switch to Analytics
-            this.currentView = 'analytics';
-
-            // Fade out list
-            listSection.style.animation = 'fadeOut 0.3s ease-out forwards';
-            controlsSection.style.animation = 'fadeOut 0.3s ease-out forwards';
-
-            setTimeout(() => {
-                listSection.style.display = 'none';
-                controlsSection.style.display = 'none';
-
-                dashboardSection.style.display = 'block';
-                dashboardSection.style.animation = 'fadeIn 0.4s ease-out forwards';
-                this.renderCharts();
-            }, 300);
-
+        // Determine target view
+        let nextView;
+        if (targetView) {
+            nextView = targetView;
         } else {
-            // Switch to List
+            // Default toggle behavior (List <-> Analytics)
+            nextView = this.currentView === 'list' ? 'analytics' : 'list';
+        }
+
+        // Apply View State
+        if (nextView === 'analytics') {
+            this.currentView = 'analytics';
+            if (listSection) listSection.style.display = 'none';
+            if (controlsSection) controlsSection.style.display = 'none';
+            if (attendanceSection) attendanceSection.style.display = 'none';
+
+            if (dashboardSection) {
+                dashboardSection.style.display = 'grid'; // Ensure grid layout
+                // Trigger chart rendering
+                setTimeout(() => this.renderCharts(), 50);
+            }
+        } else if (nextView === 'attendance') {
+            // Handled by toggleAttendanceView, but logic duplicated here for safety
+            this.currentView = 'attendance';
+            if (listSection) listSection.style.display = 'none';
+            if (controlsSection) controlsSection.style.display = 'none';
+            if (dashboardSection) dashboardSection.style.display = 'none';
+            if (attendanceSection) attendanceSection.style.display = 'block';
+        } else {
+            // Default to List View
             this.currentView = 'list';
-
-            dashboardSection.style.animation = 'fadeOut 0.3s ease-out forwards';
-
-            setTimeout(() => {
-                dashboardSection.style.display = 'none';
-
-                listSection.style.display = 'block';
-                controlsSection.style.display = 'flex';
-
-                listSection.style.animation = 'fadeIn 0.4s ease-out forwards';
-                controlsSection.style.animation = 'fadeIn 0.4s ease-out forwards';
-            }, 300);
+            if (listSection) listSection.style.display = 'block';
+            if (controlsSection) controlsSection.style.display = 'flex';
+            if (dashboardSection) dashboardSection.style.display = 'none';
+            if (attendanceSection) attendanceSection.style.display = 'none';
         }
 
         this.updateMenuLabels();
@@ -1899,9 +1930,48 @@ class GymApp {
                 options: commonOptions
             });
 
+            // 4. Update New vs Renewing (Custom Stats)
+            const statsContainer = document.getElementById('growthChart').parentElement;
+            let customStats = document.getElementById('retention-stats');
+
+            if (!customStats) {
+                customStats = document.createElement('div');
+                customStats.id = 'retention-stats';
+                customStats.style.display = 'grid';
+                customStats.style.gridTemplateColumns = '1fr 1fr';
+                customStats.style.gap = '15px';
+                customStats.style.marginTop = '20px';
+                statsContainer.appendChild(customStats);
+            }
+
+            // Using response data passed from getDashboardStats (we need to fetch it if not available here, 
+            // but for now let's use the growth data or fetch dashboard stats again)
+            // Ideally we should pass 'stats' from getDashboardStats to here, but renderCharts calls getBusinessGrowth independently.
+            // Let's quickly fetch dashboard stats to get the new numbers or use the numbers from the growth chart for 'New'.
+
+            // To be accurate, we'll fetch the dashboard stats here or reuse. 
+            // Since we updated getDashboardStats, let's use that.
+            try {
+                const dashResponse = await this.api.getDashboardStats();
+                const dStats = dashResponse.data.customers;
+
+                customStats.innerHTML = `
+                    <div class="stat-card" style="padding: 15px; border-radius: 12px; background: rgba(46, 213, 115, 0.1); border: 1px solid rgba(46, 213, 115, 0.2);">
+                        <h4 style="color: #2ed573; margin: 0 0 5px 0; font-size: 0.9em;">New (This Month)</h4>
+                        <p style="font-size: 1.5em; font-weight: bold; margin: 0; color: var(--text-primary);">${dStats.newThisMonth || 0}</p>
+                    </div>
+                    <div class="stat-card" style="padding: 15px; border-radius: 12px; background: rgba(54, 162, 235, 0.1); border: 1px solid rgba(54, 162, 235, 0.2);">
+                        <h4 style="color: #36a2eb; margin: 0 0 5px 0; font-size: 0.9em;">Renewals (This Month)</h4>
+                        <p style="font-size: 1.5em; font-weight: bold; margin: 0; color: var(--text-primary);">${dStats.renewingThisMonth || 0}</p>
+                    </div>
+                `;
+            } catch (e) {
+                console.error("Failed to load retention stats", e);
+            }
+
         } catch (error) {
             console.error('Error loading analytics:', error);
-            this.showNotification('error', 'Analytics Error', `Failed to load analytics data: ${error.message} `);
+            this.showNotification('error', 'Analytics Error', `Failed to load analytics data: ${error.message}`);
         }
     }
 

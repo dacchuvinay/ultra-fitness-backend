@@ -1,4 +1,4 @@
-const { Customer, Attendance } = require('../models');
+const { Customer, Attendance, Payment } = require('../models');
 const { asyncHandler, sendSuccess } = require('../utils/errorHandler');
 
 /**
@@ -27,12 +27,60 @@ const getDashboardStats = asyncHandler(async (req, res, next) => {
     const todayStr = today.toISOString().split('T')[0];
     const todayAttendance = await Attendance.countDocuments({ date: todayStr });
 
+    // 3. New vs Renewing (Current Month)
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+    // New Customers: Created this month
+    const newCustomers = await Customer.countDocuments({
+        createdAt: { $gte: startOfMonth, $lte: endOfMonth }
+    });
+
+    // Renewing Customers: Payments this month from customers created BEFORE this month
+    // We count unique customers who made a payment this month
+    const renewingPayments = await Payment.aggregate([
+        {
+            $match: {
+                paymentDate: { $gte: startOfMonth, $lte: endOfMonth }
+            }
+        },
+        {
+            $lookup: {
+                from: 'customers',
+                localField: 'customerId',
+                foreignField: '_id',
+                as: 'customer'
+            }
+        },
+        {
+            $unwind: '$customer'
+        },
+        {
+            $match: {
+                'customer.createdAt': { $lt: startOfMonth } // Created before this month
+            }
+        },
+        {
+            $group: {
+                _id: '$customerId'
+            }
+        },
+        {
+            $count: 'count'
+        }
+    ]);
+
+    // If no payments found, result is empty array
+    const renewingCount = renewingPayments.length > 0 ? renewingPayments[0].count : 0;
+
     sendSuccess(res, 200, {
         customers: {
             total: totalCustomers,
             active: activeCustomers,
             expiring: expiringCustomers,
-            expired: expiredCustomers
+            expired: expiredCustomers,
+            newThisMonth: newCustomers,
+            renewingThisMonth: renewingCount
         },
         attendance: {
             today: todayAttendance
@@ -73,7 +121,7 @@ const getAgeDemographics = asyncHandler(async (req, res, next) => {
         {
             $bucket: {
                 groupBy: '$age',
-                boundaries: [0, 18, 26, 36, 51, 120],
+                boundaries: [0, 15, 21, 26, 31, 36, 41, 46, 51, 120],
                 default: 'Other',
                 output: {
                     count: { $sum: 1 }
@@ -84,10 +132,14 @@ const getAgeDemographics = asyncHandler(async (req, res, next) => {
 
     // Map bucket IDs to readable labels
     const labelMap = {
-        0: 'Under 18',
-        18: '18-25',
-        26: '26-35',
-        36: '36-50',
+        0: 'Under 15',
+        15: '15-20',
+        21: '21-25',
+        26: '26-30',
+        31: '31-35',
+        36: '36-40',
+        41: '41-45',
+        46: '46-50',
         51: '50+'
     };
 

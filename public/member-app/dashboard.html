@@ -19,7 +19,12 @@
         <header class="app-header">
             <div class="header-content">
                 <h1>Ultra Fitness</h1>
-                <button id="logoutBtn" class="btn-icon">🚪</button>
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <button id="themeToggle" onclick="window.app ? window.app.toggleTheme() : location.reload()"
+                        class="btn-icon"
+                        style="font-size: 1.2rem; background: none; border: none; cursor: pointer;">🌙</button>
+                    <button id="logoutBtn" class="btn-icon">🚪</button>
+                </div>
             </div>
         </header>
 
