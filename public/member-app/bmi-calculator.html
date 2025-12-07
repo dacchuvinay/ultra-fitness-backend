@@ -120,13 +120,25 @@
                         <span>Obese: ≥ 30</span>
                     </div>
                 </div>
-                }
+            </div>
+        </main>
+    </div>
 
-                let currentUnit = 'metric';
+    <script src="./api.js"></script>
+    <script src="./theme.js"></script>
+    <script>
+        const api = new MemberAPI();
 
-                // Unit toggle
-                document.querySelectorAll('.unit-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
+        // Check auth
+        if (!api.token) {
+            window.location.href = './index.html';
+        }
+
+        let currentUnit = 'metric';
+
+        // Unit toggle
+        document.querySelectorAll('.unit-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
                 currentUnit = btn.dataset.unit;
 
                 // Update active state
@@ -135,25 +147,25 @@
 
                 // Show/hide inputs
                 if (currentUnit === 'metric') {
-                document.getElementById('metricInputs').style.display = 'block';
-                document.getElementById('imperialInputs').style.display = 'none';
+                    document.getElementById('metricInputs').style.display = 'block';
+                    document.getElementById('imperialInputs').style.display = 'none';
                 } else {
-                document.getElementById('metricInputs').style.display = 'none';
-                document.getElementById('imperialInputs').style.display = 'block';
+                    document.getElementById('metricInputs').style.display = 'none';
+                    document.getElementById('imperialInputs').style.display = 'block';
                 }
-                });
-                });
+            });
+        });
 
-                // BMI Calculation
-                document.getElementById('bmiForm').addEventListener('submit', (e) => {
-                e.preventDefault();
+        // BMI Calculation
+        document.getElementById('bmiForm').addEventListener('submit', (e) => {
+            e.preventDefault();
 
-                let heightCm, weightKg;
+            let heightCm, weightKg;
 
-                if (currentUnit === 'metric') {
+            if (currentUnit === 'metric') {
                 heightCm = parseFloat(document.getElementById('height').value);
                 weightKg = parseFloat(document.getElementById('weight').value);
-                } else {
+            } else {
                 const feet = parseFloat(document.getElementById('heightFt').value);
                 const inches = parseFloat(document.getElementById('heightIn').value);
                 const lbs = parseFloat(document.getElementById('weightLbs').value);
@@ -161,55 +173,80 @@
                 // Convert to metric
                 heightCm = ((feet * 12) + inches) * 2.54;
                 weightKg = lbs * 0.453592;
-                }
+            }
 
-                if (!heightCm || !weightKg) {
+            if (!heightCm || !weightKg) {
                 alert('Please enter valid values');
                 return;
-                }
+            }
 
-                // Calculate BMI
-                const heightM = heightCm / 100;
-                const bmi = (weightKg / (heightM * heightM)).toFixed(1);
+            // Calculate BMI
+            const heightM = heightCm / 100;
+            const bmi = (weightKg / (heightM * heightM)).toFixed(1);
 
-                displayBMI(parseFloat(bmi));
-                });
+            displayBMI(parseFloat(bmi));
+        });
 
-                function displayBMI(bmi) {
-                const resultCard = document.getElementById('bmiResult');
-                const bmiValue = document.getElementById('bmiValue');
-                const bmiCategory = document.getElementById('bmiCategory');
-                const bmiRange = document.getElementById('bmiRange');
-                const bmiTips = document.getElementById('bmiTips');
-                const bmiPointer = document.getElementById('bmiPointer');
+        function displayBMI(bmi) {
+            const resultCard = document.getElementById('bmiResult');
+            const bmiValue = document.getElementById('bmiValue');
+            const bmiCategory = document.getElementById('bmiCategory');
+            const bmiRange = document.getElementById('bmiRange');
+            const bmiTips = document.getElementById('bmiTips');
+            const bmiPointer = document.getElementById('bmiPointer');
 
-                // Update value
-                bmiValue.textContent = bmi;
+            // Update value
+            bmiValue.textContent = bmi;
 
-                // Determine category
-                let category, range, tips, color, position;
+            // Determine category
+            let category, range, tips, color, position;
 
-                if (bmi < 18.5) { category='Underweight' ; range='BMI < 18.5' ;
-                    tips='<h4>💡 Health Tips</h4><p>Consider increasing calorie intake with nutrient-dense foods. Consult with a nutritionist for a personalized meal plan.</p>'
-                    ; color='#3498db' ; position=(bmi / 18.5) * 25; // 0-25% } else if (bmi < 25) {
-                    category='Normal Weight' ; range='BMI 18.5 - 24.9' ;
-                    tips='<h4>💡 Health Tips</h4><p>Great job! Maintain a balanced diet and regular exercise routine to stay healthy.</p>'
-                    ; color='#00b894' ; position=25 + ((bmi - 18.5) / 6.5) * 25; // 25-50% } else if (bmi < 30) {
-                    category='Overweight' ; range='BMI 25 - 29.9' ;
-                    tips='<h4>💡 Health Tips</h4><p>Focus on portion control and increase physical activity. Aim for at least 150 minutes of moderate exercise per week.</p>'
-                    ; color='#fdcb6e' ; position=50 + ((bmi - 25) / 5) * 25; // 50-75% } else { category='Obese' ;
-                    range='BMI ≥ 30' ;
-                    tips='<h4>💡 Health Tips</h4><p>Consult with healthcare professionals for a comprehensive weight management plan. Regular medical check-ups are recommended.</p>'
-                    ; color='#d63031' ; position=75 + Math.min((bmi - 30) / 10, 1) * 25; // 75-100% }
-                    bmiCategory.textContent=category; bmiCategory.style.color=color; bmiRange.textContent=range;
-                    bmiTips.innerHTML=tips; // Position pointer bmiPointer.style.left=`${Math.min(position, 100)}%`; //
-                    Show result with animation resultCard.style.display='block' ;
-                    resultCard.classList.remove('fade-in'); void resultCard.offsetWidth; // Trigger reflow
-                    resultCard.classList.add('fade-in', 'scale-in' ); // Scroll to result setTimeout(()=> {
-                    resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                    }, 100);
-                    }
-                    </script>
+            if (bmi < 18.5) {
+                category = 'Underweight';
+                range = 'BMI < 18.5';
+                tips = '<h4>💡 Health Tips</h4><p>Consider increasing calorie intake with nutrient-dense foods. Consult with a nutritionist for a personalized meal plan.</p>';
+                color = '#3498db';
+                position = (bmi / 18.5) * 25; // 0-25%
+            } else if (bmi < 25) {
+                category = 'Normal Weight';
+                range = 'BMI 18.5 - 24.9';
+                tips = '<h4>💡 Health Tips</h4><p>Great job! Maintain a balanced diet and regular exercise routine to stay healthy.</p>';
+                color = '#00b894';
+                position = 25 + ((bmi - 18.5) / 6.5) * 25; // 25-50%
+            } else if (bmi < 30) {
+                category = 'Overweight';
+                range = 'BMI 25 - 29.9';
+                tips = '<h4>💡 Health Tips</h4><p>Focus on portion control and increase physical activity. Aim for at least 150 minutes of moderate exercise per week.</p>';
+                color = '#fdcb6e';
+                position = 50 + ((bmi - 25) / 5) * 25; // 50-75%
+            } else {
+                category = 'Obese';
+                range = 'BMI ≥ 30';
+                tips = '<h4>💡 Health Tips</h4><p>Consult with healthcare professionals for a comprehensive weight management plan. Regular medical check-ups are recommended.</p>';
+                color = '#d63031';
+                position = 75 + Math.min((bmi - 30) / 10, 1) * 25; // 75-100%
+            }
+
+            bmiCategory.textContent = category;
+            bmiCategory.style.color = color;
+            bmiRange.textContent = range;
+            bmiTips.innerHTML = tips;
+
+            // Position pointer
+            bmiPointer.style.left = `${Math.min(position, 100)}%`;
+
+            // Show result with animation
+            resultCard.style.display = 'block';
+            resultCard.classList.remove('fade-in');
+            void resultCard.offsetWidth; // Trigger reflow
+            resultCard.classList.add('fade-in', 'scale-in');
+
+            // Scroll to result
+            setTimeout(() => {
+                resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+    </script>
 </body>
 
 </html>
