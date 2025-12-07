@@ -940,6 +940,50 @@ body.light-mode .notification-message {
     color: #475569;
 }
 
+/* Light Mode Notification Center Dropdown */
+body.light-mode .notification-dropdown {
+    background: #ffffff;
+    border-color: #e2e8f0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .notification-header h3 {
+    color: #0f172a;
+}
+
+body.light-mode .clear-all-btn {
+    color: #64748b;
+}
+
+body.light-mode .clear-all-btn:hover {
+    color: #ef4444;
+    background: #fef2f2;
+}
+
+body.light-mode .notification-item {
+    border-bottom-color: #f1f5f9;
+}
+
+body.light-mode .notification-item:hover {
+    background: #f8fafc;
+}
+
+body.light-mode .notif-item-header span:first-child {
+    color: #334155;
+}
+
+body.light-mode .notif-time {
+    color: #94a3b8;
+}
+
+body.light-mode .notif-message {
+    color: #64748b;
+}
+
+body.light-mode .empty-notif {
+    color: #94a3b8;
+}
+
 /* ===================================
    Responsive Design
    =================================== */
