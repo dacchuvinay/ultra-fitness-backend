@@ -20,11 +20,8 @@
             <div class="header-content">
                 <h1>Ultra Fitness</h1>
                 <div style="display: flex; gap: 15px; align-items: center; flex-shrink: 0;">
-                    <button id="themeToggle" onclick="window.app ? window.app.toggleTheme() : location.reload()"
-                        class="btn-icon" aria-label="Toggle Dark Mode">🌙</button>
-                    <button id="logoutBtn" class="btn-icon">🚪</button>
+                    <button id="hamburgerBtn" class="btn-icon" aria-label="Open Menu">☰</button>
                 </div>
-            </div>
         </header>
 
         <!-- Main Content -->
@@ -72,6 +69,48 @@
                 </a>
             </div>
         </main>
+
+        <!-- Hamburger Menu Overlay -->
+        <div id="menuOverlay" class="menu-overlay"></div>
+
+        <!-- Hamburger Menu -->
+        <div id="sideMenu" class="side-menu">
+            <div class="menu-header">
+                <h3>Menu</h3>
+                <button id="closeMenuBtn" class="close-menu-btn">×</button>
+            </div>
+            <div class="menu-items">
+                <div class="menu-item" id="menuThemeToggle">
+                    <span class="menu-icon">🌙</span>
+                    <span>Dark Mode</span>
+                </div>
+                <a href="./qr-code.html" class="menu-item">
+                    <span class="menu-icon">📱</span>
+                    <span>My QR Code</span>
+                </a>
+                <a href="./attendance.html" class="menu-item">
+                    <span class="menu-icon">📅</span>
+                    <span>Attendance</span>
+                </a>
+                <a href="./bmi-calculator.html" class="menu-item">
+                    <span class="menu-icon">⚖️</span>
+                    <span>BMI Calculator</span>
+                </a>
+                <a href="./payments.html" class="menu-item">
+                    <span class="menu-icon">💳</span>
+                    <span>Payments</span>
+                </a>
+                <a href="./profile.html" class="menu-item">
+                    <span class="menu-icon">⚙️</span>
+                    <span>Settings</span>
+                </a>
+                <div class="menu-divider"></div>
+                <div class="menu-item text-danger" id="menuLogoutBtn">
+                    <span class="menu-icon">🚪</span>
+                    <span>Logout</span>
+                </div>
+            </div>
+        </div>
 
         <!-- Force Password Change Modal -->
         <div id="passwordModal" class="modal" style="display: none;">

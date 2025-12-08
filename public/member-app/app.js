@@ -114,14 +114,40 @@ class MemberApp {
     }
 
     setupEventListeners() {
-        // Handle logout
-        document.getElementById('logoutBtn').addEventListener('click', () => {
-            if (confirm('Are you sure you want to logout?')) {
-                this.api.clearToken();
-                sessionStorage.clear();
-                window.location.href = './index.html';
-            }
-        });
+        // --- Hamburger Menu Logic ---
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const closeMenuBtn = document.getElementById('closeMenuBtn');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const sideMenu = document.getElementById('sideMenu');
+
+        if (hamburgerBtn) {
+            hamburgerBtn.addEventListener('click', () => this.toggleMenu(true));
+        }
+
+        if (closeMenuBtn) {
+            closeMenuBtn.addEventListener('click', () => this.toggleMenu(false));
+        }
+
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', () => this.toggleMenu(false));
+        }
+
+        // --- Menu Actions ---
+
+        // Theme Toggle in Menu
+        const menuThemeToggle = document.getElementById('menuThemeToggle');
+        if (menuThemeToggle) {
+            menuThemeToggle.addEventListener('click', () => {
+                this.toggleTheme();
+                // Optionally close menu after toggle, but keeping it open is user friendly
+            });
+        }
+
+        // Logout in Menu
+        const menuLogoutBtn = document.getElementById('menuLogoutBtn');
+        if (menuLogoutBtn) {
+            menuLogoutBtn.addEventListener('click', () => this.handleLogout());
+        }
 
         // Handle password change form
         const pwdForm = document.getElementById('changePasswordForm');
@@ -131,6 +157,50 @@ class MemberApp {
                 await this.handlePasswordChange();
             });
         }
+    }
+
+    toggleMenu(show) {
+        const menuOverlay = document.getElementById('menuOverlay');
+        const sideMenu = document.getElementById('sideMenu');
+
+        if (show) {
+            menuOverlay.classList.add('show');
+            sideMenu.classList.add('open');
+        } else {
+            menuOverlay.classList.remove('show');
+            sideMenu.classList.remove('open');
+        }
+    }
+
+    handleLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            this.api.clearToken();
+            sessionStorage.clear();
+            window.location.href = './index.html';
+        }
+    }
+
+    setTheme(theme) {
+        const body = document.body;
+        // Update dashboard theme icon if it still exists (it doesn't, but good for safety)
+        const icon = document.getElementById('themeToggle');
+
+        // Update menu theme text/icon
+        const menuThemeText = document.querySelector('#menuThemeToggle span:last-child');
+        const menuThemeIcon = document.querySelector('#menuThemeToggle .menu-icon');
+
+        if (theme === 'dark') {
+            body.classList.add('dark-mode');
+            if (icon) icon.textContent = '☀️';
+            if (menuThemeText) menuThemeText.textContent = 'Light Mode';
+            if (menuThemeIcon) menuThemeIcon.textContent = '☀️';
+        } else {
+            body.classList.remove('dark-mode');
+            if (icon) icon.textContent = '🌙';
+            if (menuThemeText) menuThemeText.textContent = 'Dark Mode';
+            if (menuThemeIcon) menuThemeIcon.textContent = '🌙';
+        }
+        localStorage.setItem('theme', theme);
     }
 
     async handlePasswordChange() {

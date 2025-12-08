@@ -937,3 +937,102 @@ body {
         font-size: 2.5rem;
     }
 }
+/* ===================================
+   Hamburger Menu
+   =================================== */
+
+.menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.menu-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -280px;
+    width: 280px;
+    height: 100%;
+    background: var(--card-bg);
+    z-index: 999;
+    box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.side-menu.open {
+    right: 0;
+}
+
+.menu-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.menu-header h3 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.close-menu-btn {
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 5px;
+}
+
+.menu-items {
+    padding: 20px 0;
+    overflow-y: auto;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 25px;
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background: rgba(108, 92, 231, 0.05);
+}
+
+.menu-icon {
+    font-size: 1.3rem;
+    margin-right: 15px;
+    width: 24px;
+    text-align: center;
+}
+
+.menu-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: 10px 20px;
+}
+
+.text-danger {
+    color: var(--danger-color);
+}
