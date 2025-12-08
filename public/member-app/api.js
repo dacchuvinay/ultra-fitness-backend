@@ -9,6 +9,7 @@ const API_CONFIG = {
         MEMBER_ATTENDANCE: '/api/member/attendance',
         MEMBER_PAYMENTS: '/api/member/payments',
         SUBSCRIBE_PUSH: '/api/member/subscribe-push',
+        ANNOUNCEMENTS_ACTIVE: '/api/announcements/active',
     }
 };
 
@@ -112,5 +113,9 @@ class MemberAPI {
             method: 'POST',
             body: JSON.stringify({ subscription }),
         });
+    }
+
+    async getActiveAnnouncements() {
+        return await this.request(API_CONFIG.ENDPOINTS.ANNOUNCEMENTS_ACTIVE);
     }
 }

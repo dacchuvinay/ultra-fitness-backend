@@ -16,6 +16,7 @@ class MemberApp {
 
         this.initTheme();
         this.loadDashboard();
+        this.loadAnnouncements();
         this.setupEventListeners();
     }
 
@@ -87,6 +88,40 @@ class MemberApp {
         } catch (error) {
             console.error(error);
             alert('Failed to load profile: ' + error.message);
+        }
+    }
+
+    async loadAnnouncements() {
+        try {
+            const container = document.getElementById('announcement-banner');
+            const response = await this.api.getActiveAnnouncements();
+            const announcements = response.data;
+
+            if (announcements && announcements.length > 0) {
+                const typeIcons = {
+                    'info': 'ℹ️',
+                    'important': '⚠️',
+                    'offer': '🏷️',
+                    'event': '🎉',
+                    'maintenance': '🔧'
+                };
+
+                container.innerHTML = announcements.map(ann => `
+                    <div class="announcement-item ${ann.type}">
+                        <div class="announcement-icon">${typeIcons[ann.type] || 'ℹ️'}</div>
+                        <div class="announcement-content">
+                            <h4>${ann.title}</h4>
+                            <p>${ann.message}</p>
+                        </div>
+                    </div>
+                `).join('');
+                container.style.display = 'flex';
+            } else {
+                container.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Failed to load announcements:', error);
+            document.getElementById('announcement-banner').style.display = 'none';
         }
     }
 

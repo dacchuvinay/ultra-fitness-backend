@@ -95,6 +95,7 @@ app.use('/api/analytics', require('./routes/analytics.routes'));
 app.use('/api/notifications', require('./routes/notification.routes'));
 app.use('/api/member', require('./routes/member.routes'));
 app.use('/api/payments', require('./routes/payment.routes'));
+app.use('/api/announcements', require('./routes/announcement.routes'));
 
 // 404 handler
 app.use((req, res) => {
