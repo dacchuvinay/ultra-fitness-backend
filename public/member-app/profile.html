@@ -29,9 +29,21 @@
                     <div class="photo-preview" id="photoPreview">
                         <div class="photo-placeholder">👤</div>
                     </div>
-                    <p class="text-small" style="text-align: center; color: var(--text-secondary); margin-top: 10px;">
-                        Contact admin to update your profile photo
-                    </p>
+                </div>
+            </div>
+
+            <!-- App Settings -->
+            <div class="profile-section fade-in" style="animation-delay: 0.05s;">
+                <h3>⚙️ App Settings</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0;">
+                    <div>
+                        <span style="font-weight: 600;">Dark Mode</span>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">Switch between light and dark
+                            themes</p>
+                    </div>
+                    <button id="profileThemeToggle" class="btn-primary" style="width: auto; padding: 8px 16px;">
+                        🌙 Toggle
+                    </button>
                 </div>
             </div>
 
@@ -156,6 +168,27 @@
         });
 
         loadProfile();
+
+        // Theme Toggle Logic for Profile Page
+        const profileThemeBtn = document.getElementById('profileThemeToggle');
+        if (profileThemeBtn) {
+            // Set initial state
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            profileThemeBtn.textContent = currentTheme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+
+            profileThemeBtn.addEventListener('click', () => {
+                const body = document.body;
+                const isDark = body.classList.contains('dark-mode');
+
+                if (isDark) {
+                    window.updateTheme('light');
+                    profileThemeBtn.textContent = '🌙 Dark Mode';
+                } else {
+                    window.updateTheme('dark');
+                    profileThemeBtn.textContent = '☀️ Light Mode';
+                }
+            });
+        }
     </script>
 </body>
 

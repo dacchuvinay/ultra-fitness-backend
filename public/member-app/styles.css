@@ -910,6 +910,15 @@ body {
    Responsive
    =================================== */
 
+@media (max-width: 360px) {
+    .app-header h1 {
+        font-size: 1.2rem;
+    }
+    .header-content {
+        gap: 10px;
+    }
+}
+
 @media (max-width: 500px) {
     .quick-actions {
         grid-template-columns: repeat(2, 1fr);
