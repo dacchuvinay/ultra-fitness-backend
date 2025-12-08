@@ -1094,36 +1094,27 @@ class GymApp {
             }
         }
 
-        // Hamburger menu
+        // Hamburger menu button listener
         document.getElementById('hamburger-btn').addEventListener('click', () => {
-            this.openHamburgerMenu();
+            this.toggleHamburgerMenu();
         });
 
-        // Logout button
-        const logoutBtn = document.getElementById('menu-logout');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', () => {
-                this.handleLogout();
-                this.closeHamburgerMenu();
-            });
-        }
-
-        // Menu items
-        document.getElementById('menu-theme-toggle').addEventListener('click', () => {
-            this.toggleTheme();
+        // Menu close button
+        document.getElementById('menu-close-btn').addEventListener('click', () => {
             this.closeHamburgerMenu();
         });
 
-        document.getElementById('menu-password-btn').addEventListener('click', () => {
-            this.openPasswordModal();
+        // Menu overlay click to close
+        document.getElementById('menu-overlay').addEventListener('click', () => {
             this.closeHamburgerMenu();
         });
 
-        document.getElementById('menu-analytics-btn').addEventListener('click', () => {
-            this.toggleView();
-            this.updateMenuLabels();
+        // Announcements menu button 
+        document.getElementById('menu-announcements-btn').addEventListener('click', () => {
+            this.toggleAnnouncementView();
             this.closeHamburgerMenu();
         });
+
 
         document.getElementById('menu-attendance-btn').addEventListener('click', () => {
             this.toggleAttendanceView();
@@ -2651,6 +2642,146 @@ class GymApp {
     clearNotifications() {
         this.notifications = [];
         this.updateNotificationUI();
+    }
+    // ===================================
+    // Announcement Management
+    // ===================================
+
+    toggleAnnouncementView() {
+        const view = document.getElementById('announcement-view');
+        const isHidden = view.style.display === 'none';
+
+        if (isHidden) {
+            view.style.display = 'block';
+            this.loadAnnouncements();
+
+            // Set default dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('ann-start-date').value = today;
+            // Default 7 days duration
+            const nextWeek = new Date();
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            document.getElementById('ann-end-date').value = nextWeek.toISOString().split('T')[0];
+
+            this.closeHamburgerMenu();
+        } else {
+            view.style.display = 'none';
+        }
+    }
+
+    async loadAnnouncements() {
+        const listContainer = document.getElementById('announcement-list');
+        listContainer.innerHTML = '<p style="text-align:center;">Loading...</p>';
+
+        try {
+            const response = await this.api.getAllAnnouncements();
+            this.renderAnnouncements(response.data);
+        } catch (error) {
+            console.error('Failed to load announcements:', error);
+            listContainer.innerHTML = '<p style="color:red; text-align:center;">Failed to load announcements.</p>';
+        }
+    }
+
+    renderAnnouncements(announcements) {
+        const listContainer = document.getElementById('announcement-list');
+        listContainer.innerHTML = '';
+
+        if (!announcements || announcements.length === 0) {
+            listContainer.innerHTML = '<p style="text-align:center; color:#666;">No announcements found.</p>';
+            return;
+        }
+
+        announcements.forEach(ann => {
+            const isActive = new Date() >= new Date(ann.startDate) && new Date() <= new Date(ann.endDate) && ann.isActive;
+            const card = document.createElement('div');
+            card.className = 'announcement-card';
+            card.style.cssText = `
+                border: 1px solid #eee;
+                border-radius: 8px;
+                padding: 15px;
+                background: ${isActive ? '#fff' : '#f9f9f9'};
+                border-left: 4px solid ${isActive ? '#2ecc71' : '#95a5a6'};
+                position: relative;
+                margin-bottom: 10px;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            `;
+
+            const typeIcons = {
+                'info': 'ℹ️',
+                'important': '⚠️',
+                'offer': '🏷️',
+                'event': '🎉',
+                'maintenance': '🔧'
+            };
+
+            card.innerHTML = `
+                <button onclick="app.deleteAnnouncement('${ann._id}')" style="position: absolute; top: 10px; right: 10px; background: none; border: none; cursor: pointer; font-size: 1.2rem;" title="Delete">🗑️</button>
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 5px;">
+                    <span style="font-size: 1.2rem;">${typeIcons[ann.type] || 'ℹ️'}</span>
+                    <h4 style="margin: 0; color: #333;">${ann.title}</h4>
+                    ${isActive ? '<span style="background: #e8f8f5; color: #2ecc71; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">Active</span>' : '<span style="background: #f1f2f6; color: #95a5a6; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">Inactive</span>'}
+                </div>
+                <p style="margin: 5px 0 10px 0; color: #555;">${ann.message}</p>
+                <div style="font-size: 0.85rem; color: #888;">
+                    Duration: ${new Date(ann.startDate).toLocaleDateString()} - ${new Date(ann.endDate).toLocaleDateString()}
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+    }
+
+    async handleAnnouncementSubmit(e) {
+        e.preventDefault();
+        const submitBtn = e.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Posting...';
+
+        try {
+            const announcementData = {
+                title: document.getElementById('ann-title').value,
+                message: document.getElementById('ann-message').value,
+                startDate: document.getElementById('ann-start-date').value,
+                endDate: document.getElementById('ann-end-date').value,
+                type: document.getElementById('ann-type').value
+            };
+
+            await this.api.createAnnouncement(announcementData);
+
+            // Reset form
+            document.getElementById('announcement-form').reset();
+
+            // Reset dates
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('ann-start-date').value = today;
+            const nextWeek = new Date();
+            nextWeek.setDate(nextWeek.getDate() + 7);
+            document.getElementById('ann-end-date').value = nextWeek.toISOString().split('T')[0];
+
+            // Refresh list
+            await this.loadAnnouncements();
+
+            this.showNotification('success', 'Published', 'Announcement posted successfully!');
+        } catch (error) {
+            console.error('Failed to post announcement:', error);
+            this.showNotification('error', 'Error', error.message || 'Failed to post announcement');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        }
+    }
+
+    async deleteAnnouncement(id) {
+        if (!confirm('Are you sure you want to delete this announcement?')) return;
+
+        try {
+            await this.api.deleteAnnouncement(id);
+            await this.loadAnnouncements();
+            this.showNotification('success', 'Deleted', 'Announcement deleted');
+        } catch (error) {
+            console.error('Failed to delete:', error);
+            this.showNotification('error', 'Error', 'Failed to delete announcement');
+        }
     }
 }
 

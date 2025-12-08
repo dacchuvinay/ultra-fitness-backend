@@ -5,7 +5,7 @@ const {
     getActiveAnnouncements,
     deleteAnnouncement
 } = require('../controllers/announcementController');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, restrictTo } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.get('/active', protect, getActiveAnnouncements);
 
 // Admin Routes
 router.use(protect);
-router.use(authorize('admin'));
+router.use(restrictTo('admin'));
 
 router.route('/')
     .post(createAnnouncement);
