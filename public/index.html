@@ -460,6 +460,13 @@
 
                 <div class="menu-divider"></div>
 
+                <div class="menu-item" id="menu-announcements-btn">
+                    <span class="menu-icon">📢</span>
+                    <span class="menu-text">Announcements</span>
+                </div>
+
+                <div class="menu-divider"></div>
+
                 <div class="menu-item" id="menu-import-btn">
                     <span class="menu-icon">📥</span>
                     <span class="menu-text">Import Excel</span>
@@ -656,6 +663,75 @@
                                 <!-- Payments will be populated here -->
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcements View Overlay -->
+            <div id="announcement-view" class="announcement-view-overlay" style="display: none;">
+                <div class="announcement-view-header">
+                    <h2>📢 Announcements</h2>
+                    <button class="close-view-btn" onclick="app.toggleAnnouncementView()">✕</button>
+                </div>
+                <div class="announcement-view-content">
+
+                    <!-- Create Announcement Card -->
+                    <div class="announcement-create-card">
+                        <h3>✨ Create New Announcement</h3>
+                        <form id="announcement-form" onsubmit="app.handleAnnouncementSubmit(event)"
+                            class="announcement-form">
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label class="form-label">📝 Title</label>
+                                    <input type="text" id="ann-title" required class="form-input"
+                                        placeholder="Enter announcement title..." maxlength="100">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label class="form-label">💬 Message</label>
+                                    <textarea id="ann-message" required class="form-textarea" rows="3"
+                                        placeholder="Enter announcement message..." maxlength="500"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-row two-cols">
+                                <div class="form-group">
+                                    <label class="form-label">📅 Start Date</label>
+                                    <input type="date" id="ann-start-date" required class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">📅 End Date</label>
+                                    <input type="date" id="ann-end-date" required class="form-input">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group full-width">
+                                    <label class="form-label">🏷️ Type</label>
+                                    <select id="ann-type" class="form-select">
+                                        <option value="info">ℹ️ Information</option>
+                                        <option value="important">⚠️ Important</option>
+                                        <option value="offer">🏷️ Offer</option>
+                                        <option value="event">🎉 Event</option>
+                                        <option value="maintenance">🔧 Maintenance</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-announcement-submit">
+                                <span class="btn-icon">📢</span> Post Announcement
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Active Announcements Section -->
+                    <div class="announcement-list-section">
+                        <h3>📋 Active & Recent Announcements</h3>
+                        <div id="announcement-list" class="announcement-list">
+                            <p class="loading-text">Loading announcements...</p>
+                        </div>
                     </div>
                 </div>
             </div>

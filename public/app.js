@@ -1133,6 +1133,15 @@ class GymApp {
             this.closeHamburgerMenu();
         });
 
+        // Dark mode toggle (in menu)
+        const themeToggleBtn = document.getElementById('menu-theme-toggle');
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', () => {
+                this.toggleTheme();
+            });
+        }
+
+
         // Import Excel
         document.getElementById('menu-import-btn').addEventListener('click', () => {
             document.getElementById('import-excel-input').click();
