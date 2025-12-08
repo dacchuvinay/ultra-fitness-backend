@@ -1095,26 +1095,20 @@ class GymApp {
         }
 
         // Hamburger menu button listener
-        document.getElementById('hamburger-btn').addEventListener('click', () => {
-            this.toggleHamburgerMenu();
-        });
-
-        // Menu close button
-        document.getElementById('menu-close-btn').addEventListener('click', () => {
-            this.closeHamburgerMenu();
-        });
-
-        // Menu overlay click to close
-        document.getElementById('menu-overlay').addEventListener('click', () => {
-            this.closeHamburgerMenu();
-        });
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        if (hamburgerBtn) {
+            hamburgerBtn.addEventListener('click', () => {
+                this.openHamburgerMenu();
+            });
+        }
 
         // Announcements menu button 
-        document.getElementById('menu-announcements-btn').addEventListener('click', () => {
-            this.toggleAnnouncementView();
-            this.closeHamburgerMenu();
-        });
-
+        const announcementsBtn = document.getElementById('menu-announcements-btn');
+        if (announcementsBtn) {
+            announcementsBtn.addEventListener('click', () => {
+                this.toggleAnnouncementView();
+            });
+        }
 
         document.getElementById('menu-attendance-btn').addEventListener('click', () => {
             this.toggleAttendanceView();
