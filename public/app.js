@@ -413,6 +413,22 @@ class GymApp {
                 c.photo || '',
                 new Date(c.createdAt),
                 c.memberId
+            );
+
+            this.customers.push(newCustomer);
+            this.currentPhoto = '';
+
+            // Show credentials to admin with customer name for clarity
+            const msg = `
+                <strong>${c.name}</strong> added successfully!<br><br>
+                <strong>Member ID:</strong> ${c.memberId}<br>
+                <strong>Password:</strong> ${password}<br><br>
+                <em>Please share these credentials with the member.</em>
+            `;
+            // Use persistent notification
+            this.addHistoryNotification('success', 'Customer Added', msg);
+
+            this.render();
         } finally {
             this.setLoading(false);
         }
