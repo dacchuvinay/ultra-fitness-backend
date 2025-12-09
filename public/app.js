@@ -1357,37 +1357,55 @@ class GymApp {
                 // Delete photo from existing customer
                 const customer = this.customers.find(c => c.id === this.viewingPhotoCustomerId || c._id === this.viewingPhotoCustomerId);
                 if (customer && customer.photo) {
-                    // Extract Cloudinary public_id from URL (format: .../upload/v123456/filename.jpg)
-                    const urlParts = customer.photo.split('/');
-                    const filenamePart = urlParts[urlParts.length - 1];
-                    const publicId = filenamePart.split('.')[0]; // Remove extension
+                    // Extract Cloudinary public_id from URL
+                    // Format: https://res.cloudinary.com/{cloud}/image/upload/v{version}/{folder}/{file}.ext
+                    // public_id should be: {folder}/{file} (without extension and version)
+                    const uploadIndex = customer.photo.indexOf('/upload/');
+                    if (uploadIndex !== -1) {
+                        const afterUpload = customer.photo.substring(uploadIndex + 8); // Skip '/upload/'
+                        const parts = afterUpload.split('/');
+                        // Remove version (v123456) if present
+                        const startIndex = parts[0].startsWith('v') && !isNaN(parts[0].substring(1)) ? 1 : 0;
+                        // Join remaining parts and remove file extension
+                        const pathWithExt = parts.slice(startIndex).join('/');
+                        const publicId = pathWithExt.substring(0, pathWithExt.lastIndexOf('.'));
 
-                    // Delete from server
-                    await this.api.deletePhoto(publicId);
+                        // Delete from server
+                        await this.api.deletePhoto(publicId);
 
-                    // Update customer record
-                    await this.api.updateCustomer(customer.id || customer._id, { photo: '' });
+                        // Update customer record
+                        await this.api.updateCustomer(customer.id || customer._id, { photo: '' });
 
-                    // Update local state
-                    customer.photo = '';
-                    this.showNotification('success', 'Photo Deleted', 'Profile photo has been removed');
-                    this.render();
+                        // Update local state
+                        customer.photo = '';
+                        this.showNotification('success', 'Photo Deleted', 'Profile photo has been removed');
+                        this.render();
+                    }
                 }
             } else {
                 // Delete current photo being added (orphaned upload)
                 if (this.currentPhoto) {
-                    const urlParts = this.currentPhoto.split('/');
-                    const filenamePart = urlParts[urlParts.length - 1];
-                    const publicId = filenamePart.split('.')[0];
-                    await this.api.deletePhoto(publicId);
-                    this.showNotification('success', 'Photo Removed', 'Photo has been removed');
+                    const uploadIndex = this.currentPhoto.indexOf('/upload/');
+                    if (uploadIndex !== -1) {
+                        const afterUpload = this.currentPhoto.substring(uploadIndex + 8);
+                        const parts = afterUpload.split('/');
+                        const startIndex = parts[0].startsWith('v') && !isNaN(parts[0].substring(1)) ? 1 : 0;
+                        const pathWithExt = parts.slice(startIndex).join('/');
+                        const publicId = pathWithExt.substring(0, pathWithExt.lastIndexOf('.'));
+
+                        await this.api.deletePhoto(publicId);
+                        this.showNotification('success', 'Photo Removed', 'Photo has been removed');
+                    }
+                    this.clearPhotoPreview();
                 }
-                this.clearPhotoPreview();
             }
             this.closeImageModal();
         } catch (error) {
             console.error('Photo delete failed:', error);
-            this.showNotification('error', 'Error', 'Failed to delete photo');
+            // Don't show error notification for non-existent files
+            if (!error.message || !error.message.includes('File not found')) {
+                this.showNotification('error', 'Error', 'Failed to delete photo');
+            }
         }
     }
 
