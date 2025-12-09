@@ -74,6 +74,12 @@ if (process.env.NODE_ENV === 'development') {
     }));
 }
 
+// Serve Member Portal at /member-app (PWA)
+app.use('/member-app', express.static(path.join(__dirname, '../public/member-app')));
+
+// Serve Admin Panel static files (at root)
+app.use(express.static(path.join(__dirname, '../public')));
+
 // Static files for uploads
 app.use('/uploads', express.static('uploads'));
 
