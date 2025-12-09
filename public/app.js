@@ -1305,8 +1305,9 @@ class GymApp {
             this.showNotification('warning', 'Uploading...', 'Uploading photo...');
             const response = await this.api.uploadPhoto(file);
 
-            // Validate response
-            const photoUrl = response.data?.photoUrl || response.data?.url || response.data?.secure_url;
+            // Validate response - handle Cloudinary (photoUrl/url/secure_url) and local uploads (path)
+            const photoUrl = response.data?.photoUrl || response.data?.url || response.data?.secure_url ||
+                (response.data?.path ? (this.api.baseUrl || window.location.origin) + response.data.path : null);
 
             if (!photoUrl) {
                 console.error('Invalid upload response:', response);
