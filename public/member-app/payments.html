@@ -68,7 +68,7 @@
         async function downloadReceipt(paymentId) {
             try {
                 const token = api.token;
-                const url = `${api.baseURL}/api/member/payments/${paymentId}/receipt`;
+                const url = `${api.baseUrl}/api/member/payments/${paymentId}/receipt`;
 
                 // Create a link and trigger download
                 const link = document.createElement('a');
