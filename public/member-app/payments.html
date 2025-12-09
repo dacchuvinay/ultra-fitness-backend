@@ -53,13 +53,48 @@
                             <p class="item-subtitle">${date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                             <p class="item-meta">${payment.paymentMethod} ${payment.receiptNumber ? `• Receipt: ${payment.receiptNumber}` : ''}</p>
                         </div>
-                        <div class="item-badge badge-${payment.status}">${payment.status}</div>
+                        <button class="btn-download-receipt" onclick="downloadReceipt('${payment._id}')" title="Download Receipt">
+                            📄
+                        </button>
                     `;
                     container.appendChild(div);
                 });
             } catch (error) {
                 document.getElementById('paymentList').innerHTML =
                     '<p class="error-state">Failed to load payments</p>';
+            }
+        }
+
+        async function downloadReceipt(paymentId) {
+            try {
+                const token = api.token;
+                const url = `${api.baseURL}/api/member/payments/${paymentId}/receipt`;
+
+                // Create a link and trigger download
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('Authorization', `Bearer ${token}`);
+                link.download = `receipt-${paymentId}.pdf`;
+
+                // For authenticated download, use fetch and blob
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Download failed');
+
+                const blob = await response.blob();
+                const blobUrl = window.URL.createObjectURL(blob);
+
+                link.href = blobUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(blobUrl);
+            } catch (error) {
+                alert('Failed to download receipt. Please try again.');
             }
         }
 

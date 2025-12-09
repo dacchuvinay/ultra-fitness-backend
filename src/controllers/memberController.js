@@ -1,6 +1,7 @@
 const { Customer, Attendance, Payment } = require('../models');
 const { generateToken } = require('../utils/jwt');
 const { AppError, asyncHandler, sendSuccess } = require('../utils/errorHandler');
+const { generatePaymentReceipt } = require('../utils/pdfGenerator');
 
 /**
  * @desc    Member login with memberId and password
@@ -337,6 +338,42 @@ const getMonthlyProgress = asyncHandler(async (req, res, next) => {
     });
 });
 
+/**
+ * @desc    Download payment receipt as PDF
+ * @route   GET /api/member/payments/:paymentId/receipt
+ * @access  Private (Member)
+ */
+const downloadPaymentReceipt = asyncHandler(async (req, res, next) => {
+    const { paymentId } = req.params;
+
+    // Find payment
+    const payment = await Payment.findById(paymentId);
+    if (!payment) {
+        return next(new AppError('Payment not found', 404));
+    }
+
+    // Verify payment belongs to this member
+    if (payment.customerId.toString() !== req.user.id) {
+        return next(new AppError('Unauthorized access to this payment', 403));
+    }
+
+    // Find customer details
+    const customer = await Customer.findById(req.user.id);
+    if (!customer) {
+        return next(new AppError('Customer not found', 404));
+    }
+
+    // Generate PDF
+    const pdfDoc = generatePaymentReceipt(payment, customer);
+
+    // Set response headers
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=receipt-${payment._id}.pdf`);
+
+    // Stream PDF to response
+    pdfDoc.pipe(res);
+});
+
 module.exports = {
     memberLogin,
     getMemberProfile,
@@ -347,4 +384,5 @@ module.exports = {
     subscribePushNotification,
     getBadgeStatus,
     getMonthlyProgress,
+    downloadPaymentReceipt,
 };

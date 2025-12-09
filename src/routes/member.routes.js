@@ -9,6 +9,7 @@ const {
     subscribePushNotification,
     getBadgeStatus,
     getMonthlyProgress,
+    downloadPaymentReceipt,
 } = require('../controllers/memberController');
 const { protect } = require('../middleware/auth');
 
@@ -165,6 +166,20 @@ router.get('/attendance', protect, getMemberAttendance);
  *         description: Payment records
  */
 router.get('/payments', protect, getMemberPayments);
+
+/**
+ * @swagger
+ * /api/member/payments/:paymentId/receipt:
+ *   get:
+ *     summary: Download payment receipt PDF
+ *     tags: [Member]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: PDF receipt
+ */
+router.get('/payments/:paymentId/receipt', protect, downloadPaymentReceipt);
 
 /**
  * @swagger

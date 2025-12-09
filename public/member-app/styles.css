@@ -1656,3 +1656,31 @@ body.dark-mode .stat-item {
         font-size: 1.8rem;
     }
 }
+
+/* PDF Receipt Download Button */
+.btn-download-receipt {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 50px;
+}
+
+.btn-download-receipt:hover {
+    background: var(--primary-dark);
+    transform: scale(1.1);
+}
+
+body.dark-mode .btn-download-receipt {
+    background: var(--primary-color);
+}
+
+.payment-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
