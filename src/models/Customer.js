@@ -74,6 +74,16 @@ const customerSchema = new mongoose.Schema({
     lastLogin: {
         type: Date,
     },
+    // Achievement Badges
+    totalVisits: {
+        type: Number,
+        default: 0,
+    },
+    badgesEarned: {
+        type: [String],
+        default: [],
+        enum: ['Bronze', 'Silver', 'Gold', 'Beast Mode'],
+    },
 }, {
     timestamps: true,
 });

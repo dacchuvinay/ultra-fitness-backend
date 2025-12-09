@@ -38,6 +38,44 @@ const markAttendance = asyncHandler(async (req, res, next) => {
         markedBy: req.user.id
     });
 
+    // 4. Check and award badges
+    const BADGE_MILESTONES = {
+        'Bronze': 10,
+        'Silver': 30,
+        'Gold': 60,
+        'Beast Mode': 120
+    };
+
+    const BADGE_MESSAGES = {
+        'Bronze': '10 visits completed — great start! Keep it up! 💪',
+        'Silver': '30 gym visits completed — you\'re killing it! 💪🔥',
+        'Gold': '60 visits completed — you\'re a fitness champion! 🏆✨',
+        'Beast Mode': '120 visits completed! You\'re an absolute BEAST! 👑🔥 You will take yourself in future!'
+    };
+
+    // Increment total visits
+    customer.totalVisits += 1;
+
+    // Check for new badge
+    let badgeEarned = null;
+    const badges = ['Bronze', 'Silver', 'Gold', 'Beast Mode'];
+
+    for (const badge of badges) {
+        const threshold = BADGE_MILESTONES[badge];
+        if (customer.totalVisits === threshold && !customer.badgesEarned.includes(badge)) {
+            customer.badgesEarned.push(badge);
+            badgeEarned = {
+                showPopup: true,
+                badge,
+                visits: customer.totalVisits,
+                message: BADGE_MESSAGES[badge]
+            };
+            break; // Only award one badge at a time
+        }
+    }
+
+    await customer.save();
+
     // Broadcast real-time update
     try {
         const { getIO } = require('../config/socket');
@@ -49,7 +87,12 @@ const markAttendance = asyncHandler(async (req, res, next) => {
         console.error('Socket emit error:', error.message);
     }
 
-    sendSuccess(res, 201, { attendance }, 'Attendance marked successfully');
+    const responseData = { attendance };
+    if (badgeEarned) {
+        responseData.badgeEarned = badgeEarned;
+    }
+
+    sendSuccess(res, 201, responseData, 'Attendance marked successfully');
 });
 
 /**

@@ -18,6 +18,7 @@ class MemberApp {
         this.loadDashboard();
         this.loadAnnouncements();
         this.loadGymCount();
+        this.loadBadges();
         this.setupEventListeners();
     }
 
@@ -159,6 +160,79 @@ class MemberApp {
             console.error('Failed to load gym count:', error);
             document.getElementById('gymCountNumber').textContent = '--';
             document.getElementById('crowdLevel').textContent = 'Unable to load';
+        }
+    }
+
+    async loadBadges() {
+        try {
+            const response = await this.api.getBadgeStatus();
+            const { badgesEarned } = response.data;
+
+            // Update badge display
+            const badgeElements = document.querySelectorAll('.member-badges .badge');
+            badgeElements.forEach(badgeEl => {
+                const badgeName = badgeEl.getAttribute('data-badge');
+                if (badgesEarned && badgesEarned.includes(badgeName)) {
+                    badgeEl.classList.remove('locked');
+                    badgeEl.classList.add('earned');
+                }
+            });
+        } catch (error) {
+            console.error('Failed to load badges:', error);
+        }
+    }
+
+    showBadgePopup(badgeData) {
+        const { badge, message } = badgeData;
+
+        // Badge icons
+        const badgeIcons = {
+            'Bronze': '🥉',
+            'Silver': '🥈',
+            'Gold': '🥇',
+            'Beast Mode': '💪'
+        };
+
+        // Update popup content
+        document.getElementById('badgeIconLarge').textContent = badgeIcons[badge] || '🏆';
+        document.getElementById('badgeName').textContent = `${badge} Badge!`;
+        document.getElementById('badgeMessage').textContent = message;
+
+        // Show popup
+        const popup = document.getElementById('badgePopup');
+        popup.style.display = 'flex';
+
+        // Create confetti
+        this.createConfetti();
+
+        // Play sound (optional audio element)
+        try {
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFb');
+            audio.play().catch(() => { });
+        } catch (e) { }
+
+        // Setup close button
+        document.getElementById('badgePopupBtn').onclick = () => {
+            popup.style.display = 'none';
+            document.getElementById('confettiContainer').innerHTML = '';
+        };
+    }
+
+    createConfetti() {
+        const container = document.getElementById('confettiContainer');
+        container.innerHTML = '';
+
+        const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#f7b731', '#5f27cd', '#00d2d3'];
+        const confettiCount = 50;
+
+        for (let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.style.left = Math.random() * 100 + '%';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            container.appendChild(confetti);
         }
     }
 

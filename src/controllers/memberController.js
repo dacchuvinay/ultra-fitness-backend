@@ -198,6 +198,50 @@ const subscribePushNotification = asyncHandler(async (req, res, next) => {
     sendSuccess(res, 200, { subscription }, 'Push notification subscription successful');
 });
 
+/**
+ * @desc    Get member badge status
+ * @route   GET /api/member/badges
+ * @access  Private (Member)
+ */
+const getBadgeStatus = asyncHandler(async (req, res, next) => {
+    const customer = await Customer.findById(req.user.id);
+    if (!customer) {
+        return next(new AppError('Member not found', 404));
+    }
+
+    const BADGE_MILESTONES = {
+        'Bronze': 10,
+        'Silver': 30,
+        'Gold': 60,
+        'Beast Mode': 120
+    };
+
+    const badgeOrder = ['Bronze', 'Silver', 'Gold', 'Beast Mode'];
+
+    // Find next badge to unlock
+    let nextBadge = null;
+    let progress = 0;
+
+    for (const badge of badgeOrder) {
+        if (!customer.badgesEarned.includes(badge)) {
+            nextBadge = {
+                name: badge,
+                visitsRequired: BADGE_MILESTONES[badge],
+                visitsRemaining: BADGE_MILESTONES[badge] - customer.totalVisits
+            };
+            progress = Math.min(100, (customer.totalVisits / BADGE_MILESTONES[badge]) * 100);
+            break;
+        }
+    }
+
+    sendSuccess(res, 200, {
+        totalVisits: customer.totalVisits,
+        badgesEarned: customer.badgesEarned,
+        nextBadge,
+        progress: Math.round(progress)
+    });
+});
+
 module.exports = {
     memberLogin,
     getMemberProfile,
@@ -206,4 +250,5 @@ module.exports = {
     getMemberAttendance,
     getMemberPayments,
     subscribePushNotification,
+    getBadgeStatus,
 };

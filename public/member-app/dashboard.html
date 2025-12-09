@@ -34,6 +34,22 @@
                 <div class="member-avatar">👤</div>
                 <h2 id="memberName">Loading...</h2>
                 <p id="memberId" class="member-id">U001</p>
+
+                <!-- Achievement Badges -->
+                <div class="member-badges" id="memberBadges">
+                    <div class="badge bronze locked" data-badge="Bronze">
+                        <span class="badge-icon">🥉</span>
+                    </div>
+                    <div class="badge silver locked" data-badge="Silver">
+                        <span class="badge-icon">🥈</span>
+                    </div>
+                    <div class="badge gold locked" data-badge="Gold">
+                        <span class="badge-icon">🥇</span>
+                    </div>
+                    <div class="badge beast locked" data-badge="Beast Mode">
+                        <span class="badge-icon">💪</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Plan Status Card -->
@@ -149,6 +165,26 @@
                     <button type="submit" class="btn-primary">Change Password</button>
                     <div id="pwdError" class="error-message" style="display: none;"></div>
                 </form>
+            </div>
+        </div>
+
+        <!-- Badge Celebration Popup -->
+        <div id="badgePopup" class="badge-popup" style="display: none;">
+            <div class="badge-popup-overlay"></div>
+            <div class="badge-popup-content">
+                <!-- Confetti Animation -->
+                <div class="confetti-container" id="confettiContainer"></div>
+
+                <!-- Badge Icon -->
+                <div class="badge-icon-large" id="badgeIconLarge">🥈</div>
+
+                <!-- Content -->
+                <h2 class="badge-popup-title">🎉 Achievement Unlocked!</h2>
+                <h3 class="badge-popup-badge-name" id="badgeName">Silver Badge</h3>
+                <p class="badge-popup-message" id="badgeMessage">30 gym visits completed — you're killing it! 💪🔥</p>
+
+                <!-- Button -->
+                <button class="btn-badge-awesome" id="badgePopupBtn">Awesome!</button>
             </div>
         </div>
     </div>

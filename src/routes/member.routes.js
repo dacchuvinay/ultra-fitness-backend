@@ -7,6 +7,7 @@ const {
     getMemberAttendance,
     getMemberPayments,
     subscribePushNotification,
+    getBadgeStatus,
 } = require('../controllers/memberController');
 const { protect } = require('../middleware/auth');
 
@@ -189,5 +190,19 @@ router.get('/payments', protect, getMemberPayments);
  *         description: Subscription successful
  */
 router.post('/subscribe-push', protect, subscribePushNotification);
+
+/**
+ * @swagger
+ * /api/member/badges:
+ *   get:
+ *     summary: Get member badge status
+ *     tags: [Member]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Badge status
+ */
+router.get('/badges', protect, getBadgeStatus);
 
 module.exports = router;

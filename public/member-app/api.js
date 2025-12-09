@@ -11,6 +11,7 @@ const API_CONFIG = {
         SUBSCRIBE_PUSH: '/api/member/subscribe-push',
         ANNOUNCEMENTS_ACTIVE: '/api/announcements/active',
         ATTENDANCE_CURRENT_COUNT: '/api/attendance/current-count',
+        MEMBER_BADGES: '/api/member/badges',
     }
 };
 
@@ -122,5 +123,9 @@ class MemberAPI {
 
     async getCurrentGymCount() {
         return await this.request(API_CONFIG.ENDPOINTS.ATTENDANCE_CURRENT_COUNT);
+    }
+
+    async getBadgeStatus() {
+        return await this.request(API_CONFIG.ENDPOINTS.MEMBER_BADGES);
     }
 }

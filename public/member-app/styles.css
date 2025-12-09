@@ -1320,3 +1320,244 @@ body.dark-mode .announcement-item.info { background: rgba(52, 152, 219, 0.15); b
         font-size: 0.9rem;
     }
 }
+
+/* ===================================
+   Achievement Badges System
+   =================================== */
+
+/* Badge Display on Member Card */
+.member-badges {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.badge {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.badge.earned {
+    animation: badgeGlow 2s ease-in-out infinite;
+}
+
+.badge.locked {
+    background: #ddd;
+    filter: grayscale(100%);
+    opacity: 0.4;
+    box-shadow: none;
+}
+
+body.dark-mode .badge.locked {
+    background: #444;
+}
+
+.badge-icon {
+    font-size: 1.8rem;
+}
+
+.badge:hover {
+    transform: scale(1.15) rotate(10deg);
+}
+
+@keyframes badgeGlow {
+    0%, 100% {
+        box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.8), 0 0 30px rgba(255, 215, 0, 0.5);
+    }
+}
+
+/* Badge Celebration Popup */
+.badge-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.badge-popup-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+}
+
+.badge-popup-content {
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    padding: 40px 30px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: popupSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 2;
+}
+
+@keyframes popupSlideIn {
+    from {
+        transform: scale(0.5) translateY(-100px);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+.badge-icon-large {
+    font-size: 6rem;
+    margin-bottom: 20px;
+    animation: iconBounce 1s ease infinite;
+}
+
+@keyframes iconBounce {
+    0%, 100% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-15px) scale(1.1);
+    }
+}
+
+.badge-popup-title {
+    color: white;
+    font-size: 1.8rem;
+    margin: 0 0 10px 0;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.badge-popup-badge-name {
+    color: #FFD700;
+    font-size: 1.5rem;
+    margin: 0 0 15px 0;
+    font-weight: 700;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.badge-popup-message {
+    color: white;
+    font-size: 1.1rem;
+    margin: 0 0 30px 0;
+    line-height: 1.6;
+    opacity: 0.95;
+}
+
+.btn-badge-awesome {
+    background: white;
+    color: #667eea;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-badge-awesome:hover {
+    background: #FFD700;
+    transform: scale(1.05);
+    box-shadow: 0 6px 25px rgba(255, 215, 0, 0.4);
+}
+
+/* Confetti Animation */
+.confetti-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    opacity: 0;
+    animation: confettiFall linear forwards;
+}
+
+@keyframes confettiFall {
+    0% {
+        top: -10px;
+        opacity: 1;
+        transform: translateX(0) rotate(0deg);
+    }
+    100% {
+        top: 100%;
+        opacity: 0;
+        transform: translateX(calc(50vw - 100px)) rotate(720deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+    .badge-popup-content {
+        padding: 30px 20px;
+        max-width: 90%;
+    }
+
+    .badge-icon-large {
+        font-size: 4.5rem;
+    }
+
+    .badge-popup-title {
+        font-size: 1.5rem;
+    }
+
+    .badge-popup-badge-name {
+        font-size: 1.3rem;
+    }
+
+    .badge-popup-message {
+        font-size: 1rem;
+    }
+
+    .member-badges {
+        gap: 8px;
+    }
+
+    .badge {
+        width: 45px;
+        height: 45px;
+    }
+
+    .badge-icon {
+        font-size: 1.5rem;
+    }
+}
