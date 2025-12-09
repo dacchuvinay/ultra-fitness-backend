@@ -413,25 +413,6 @@ class GymApp {
                 c.photo || '',
                 new Date(c.createdAt),
                 c.memberId
-            );
-
-            this.customers.push(newCustomer);
-            this.currentPhoto = '';
-
-            // Show credentials to admin
-            const msg = `
-                Member Added Successfully!<br><br>
-                <strong>Member ID:</strong> ${c.memberId}<br>
-                <strong>Password:</strong> ${password}<br><br>
-                <em>Please share these with the member.</em>
-            `;
-            // Use persistent notification
-            this.addHistoryNotification('success', 'Customer Added', msg);
-
-            this.render();
-        } catch (error) {
-            console.error('Add failed:', error);
-            this.showNotification('error', 'Add Failed', error.message || 'Could not save customer');
         } finally {
             this.setLoading(false);
         }
