@@ -19,6 +19,7 @@ class MemberApp {
         this.loadAnnouncements();
         this.loadGymCount();
         this.loadBadges();
+        this.loadMonthlyProgress();
         this.setupEventListeners();
     }
 
@@ -233,6 +234,20 @@ class MemberApp {
             confetti.style.animationDelay = Math.random() * 3 + 's';
             confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
             container.appendChild(confetti);
+        }
+    }
+
+    async loadMonthlyProgress() {
+        try {
+            const response = await this.api.getMonthlyProgress();
+            const { month, totalCheckIns, daysMissed, currentStreak } = response.data;
+
+            document.getElementById('progressMonth').textContent = `📊 ${month} Progress`;
+            document.getElementById('totalCheckIns').textContent = totalCheckIns;
+            document.getElementById('daysMissed').textContent = daysMissed;
+            document.getElementById('currentStreak').textContent = currentStreak;
+        } catch (error) {
+            console.error('Failed to load monthly progress:', error);
         }
     }
 

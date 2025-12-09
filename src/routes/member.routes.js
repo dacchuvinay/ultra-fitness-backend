@@ -8,6 +8,7 @@ const {
     getMemberPayments,
     subscribePushNotification,
     getBadgeStatus,
+    getMonthlyProgress,
 } = require('../controllers/memberController');
 const { protect } = require('../middleware/auth');
 
@@ -156,8 +157,7 @@ router.get('/attendance', protect, getMemberAttendance);
  *           type: integer
  *         description: Number of records
  *       - in: query
- *         name: page
- *         schema:
+ *         name: page:
  *           type: integer
  *         description: Page number
  *     responses:
@@ -204,5 +204,19 @@ router.post('/subscribe-push', protect, subscribePushNotification);
  *         description: Badge status
  */
 router.get('/badges', protect, getBadgeStatus);
+
+/**
+ * @swagger
+ * /api/member/monthly-progress:
+ *   get:
+ *     summary: Get monthly progress analytics
+ *     tags: [Member]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Monthly stats
+ */
+router.get('/monthly-progress', protect, getMonthlyProgress);
 
 module.exports = router;

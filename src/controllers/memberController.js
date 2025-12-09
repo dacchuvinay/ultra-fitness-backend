@@ -242,6 +242,101 @@ const getBadgeStatus = asyncHandler(async (req, res, next) => {
     });
 });
 
+/**
+ * @desc    Get monthly progress analytics
+ * @route   GET /api/member/monthly-progress
+ * @access  Private (Member)
+ */
+const getMonthlyProgress = asyncHandler(async (req, res, next) => {
+    const customer = await Customer.findById(req.user.id);
+    if (!customer) {
+        return next(new AppError('Member not found', 404));
+    }
+
+    // Get current month's start and end dates
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+
+    const monthStart = new Date(year, month, 1);
+    const monthEnd = new Date(year, month + 1, 0);
+    const totalDaysInMonth = monthEnd.getDate();
+
+    // Format dates as YYYY-MM-DD for comparison
+    const formatDate = (date) => {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    };
+
+    const monthStartStr = formatDate(monthStart);
+    const monthEndStr = formatDate(monthEnd);
+
+    // Get attendance records for current month
+    const monthlyAttendance = await Attendance.find({
+        customerId: req.user.id,
+        date: { $gte: monthStartStr, $lte: monthEndStr }
+    }).sort({ date: -1 });
+
+    const totalCheckIns = monthlyAttendance.length;
+    const daysMissed = totalDaysInMonth - totalCheckIns;
+
+    // Calculate current streak (consecutive days without breaks)
+    let currentStreak = 0;
+
+    if (monthlyAttendance.length > 0) {
+        const attendanceDates = monthlyAttendance.map(a => new Date(a.date));
+        attendanceDates.sort((a, b) => b - a); // Sort descending
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Check if last attendance was today or yesterday
+        const lastAttendance = new Date(attendanceDates[0]);
+        lastAttendance.setHours(0, 0, 0, 0);
+
+        const daysSinceLastVisit = Math.floor((today - lastAttendance) / (1000 * 60 * 60 * 24));
+
+        if (daysSinceLastVisit <= 1) {
+            // Count consecutive days
+            let checkDate = new Date(lastAttendance);
+
+            for (const attendanceDate of attendanceDates) {
+                const attDate = new Date(attendanceDate);
+                attDate.setHours(0, 0, 0, 0);
+
+                if (attDate.getTime() === checkDate.getTime()) {
+                    currentStreak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                } else {
+                    // Check if there's a gap
+                    const expectedDate = new Date(checkDate);
+                    const diff = Math.floor((checkDate - attDate) / (1000 * 60 * 60 * 24));
+
+                    if (diff > 0) {
+                        break; // Gap found, streak ends
+                    }
+                }
+            }
+        }
+    }
+
+    // Get month name
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthName = `${monthNames[month]} ${year}`;
+
+    sendSuccess(res, 200, {
+        month: monthName,
+        totalCheckIns,
+        totalDaysInMonth,
+        daysMissed,
+        currentStreak,
+        lastCheckIn: monthlyAttendance.length > 0 ? monthlyAttendance[0].date : null
+    });
+});
+
 module.exports = {
     memberLogin,
     getMemberProfile,
@@ -251,4 +346,5 @@ module.exports = {
     getMemberPayments,
     subscribePushNotification,
     getBadgeStatus,
+    getMonthlyProgress,
 };

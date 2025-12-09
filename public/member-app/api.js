@@ -12,6 +12,7 @@ const API_CONFIG = {
         ANNOUNCEMENTS_ACTIVE: '/api/announcements/active',
         ATTENDANCE_CURRENT_COUNT: '/api/attendance/current-count',
         MEMBER_BADGES: '/api/member/badges',
+        MEMBER_MONTHLY_PROGRESS: '/api/member/monthly-progress',
     }
 };
 
@@ -127,5 +128,9 @@ class MemberAPI {
 
     async getBadgeStatus() {
         return await this.request(API_CONFIG.ENDPOINTS.MEMBER_BADGES);
+    }
+
+    async getMonthlyProgress() {
+        return await this.request(API_CONFIG.ENDPOINTS.MEMBER_MONTHLY_PROGRESS);
     }
 }
