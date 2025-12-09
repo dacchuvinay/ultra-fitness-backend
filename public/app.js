@@ -1304,7 +1304,16 @@ class GymApp {
         try {
             this.showNotification('warning', 'Uploading...', 'Uploading photo...');
             const response = await this.api.uploadPhoto(file);
-            this.currentPhoto = response.data.photoUrl; // Backend returns photoUrl from Cloudinary
+
+            // Validate response
+            const photoUrl = response.data?.photoUrl || response.data?.url || response.data?.secure_url;
+
+            if (!photoUrl) {
+                console.error('Invalid upload response:', response);
+                throw new Error('Server did not return a valid photo URL');
+            }
+
+            this.currentPhoto = photoUrl;
             this.displayPhoto(this.currentPhoto);
             this.showNotification('success', 'Upload Complete', 'Photo uploaded successfully');
         } catch (error) {
