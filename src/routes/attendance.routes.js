@@ -3,7 +3,8 @@ const {
     markAttendance,
     getAttendance,
     getAttendanceStats,
-    getCustomerAttendance
+    getCustomerAttendance,
+    getCurrentGymCount
 } = require('../controllers/attendanceController');
 const { protect } = require('../middleware/auth');
 
@@ -45,6 +46,20 @@ router.use(protect);
  *         description: Already marked for today
  */
 router.post('/mark', markAttendance);
+
+/**
+ * @swagger
+ * /api/attendance/current-count:
+ *   get:
+ *     summary: Get current gym count
+ *     tags: [Attendance]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Number of members currently in gym
+ */
+router.get('/current-count', getCurrentGymCount);
 
 /**
  * @swagger

@@ -17,6 +17,7 @@ class MemberApp {
         this.initTheme();
         this.loadDashboard();
         this.loadAnnouncements();
+        this.loadGymCount();
         this.setupEventListeners();
     }
 
@@ -122,6 +123,42 @@ class MemberApp {
         } catch (error) {
             console.error('Failed to load announcements:', error);
             document.getElementById('announcement-banner').style.display = 'none';
+        }
+    }
+
+    async loadGymCount() {
+        try {
+            const response = await this.api.getCurrentGymCount();
+            const { count } = response.data;
+
+            // Update count display
+            document.getElementById('gymCountNumber').textContent = count;
+
+            // Determine crowd level
+            const crowdLevelEl = document.getElementById('crowdLevel');
+            let levelClass = '';
+            let levelText = '';
+
+            if (count === 0) {
+                levelClass = 'level-empty';
+                levelText = '🟢 Gym is empty';
+            } else if (count <= 5) {
+                levelClass = 'level-free';
+                levelText = '🟢 Gym is free';
+            } else if (count <= 15) {
+                levelClass = 'level-medium';
+                levelText = '🟡 Medium crowd';
+            } else {
+                levelClass = 'level-crowded';
+                levelText = '🔴 Gym is crowded';
+            }
+
+            crowdLevelEl.textContent = levelText;
+            crowdLevelEl.className = `crowd-level ${levelClass}`;
+        } catch (error) {
+            console.error('Failed to load gym count:', error);
+            document.getElementById('gymCountNumber').textContent = '--';
+            document.getElementById('crowdLevel').textContent = 'Unable to load';
         }
     }
 

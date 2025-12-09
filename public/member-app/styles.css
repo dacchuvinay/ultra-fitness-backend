@@ -1099,3 +1099,102 @@ body.dark-mode .announcement-item.offer { background: rgba(241, 196, 15, 0.15); 
 body.dark-mode .announcement-item.event { background: rgba(155, 89, 182, 0.15); border-left-color: #9b59b6; }
 body.dark-mode .announcement-item.maintenance { background: rgba(230, 126, 34, 0.15); border-left-color: #e67e22; }
 body.dark-mode .announcement-item.info { background: rgba(52, 152, 219, 0.15); border-left-color: #3498db; }
+
+/* ===================================
+   Live Gym Count Card
+   =================================== */
+
+.gym-count-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.gym-count-icon {
+    font-size: 3rem;
+    line-height: 1;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 12px;
+}
+
+.gym-count-content {
+    flex: 1;
+}
+
+.gym-count-content h3 {
+    margin: 0 0 10px 0;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.gym-count-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.gym-count-number {
+    font-size: 3rem;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+}
+
+.gym-count-label {
+    color: white;
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+.crowd-level {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.25);
+    color: white;
+}
+
+.crowd-level.level-empty,
+.crowd-level.level-free {
+    background: rgba(46, 213, 115, 0.3);
+}
+
+.crowd-level.level-medium {
+    background: rgba(255, 234, 167, 0.3);
+}
+
+.crowd-level.level-crowded {
+    background: rgba(255, 107, 107, 0.3);
+}
+
+/* Responsive Design for Gym Count */
+@media (max-width: 480px) {
+    .gym-count-card {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .gym-count-icon {
+        font-size: 2.5rem;
+        padding: 12px;
+    }
+
+    .gym-count-number {
+        font-size: 2.5rem;
+    }
+
+    .gym-count-label {
+        font-size: 0.9rem;
+    }
+}

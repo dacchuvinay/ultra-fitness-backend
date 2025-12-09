@@ -10,6 +10,7 @@ const API_CONFIG = {
         MEMBER_PAYMENTS: '/api/member/payments',
         SUBSCRIBE_PUSH: '/api/member/subscribe-push',
         ANNOUNCEMENTS_ACTIVE: '/api/announcements/active',
+        ATTENDANCE_CURRENT_COUNT: '/api/attendance/current-count',
     }
 };
 
@@ -117,5 +118,9 @@ class MemberAPI {
 
     async getActiveAnnouncements() {
         return await this.request(API_CONFIG.ENDPOINTS.ANNOUNCEMENTS_ACTIVE);
+    }
+
+    async getCurrentGymCount() {
+        return await this.request(API_CONFIG.ENDPOINTS.ATTENDANCE_CURRENT_COUNT);
     }
 }

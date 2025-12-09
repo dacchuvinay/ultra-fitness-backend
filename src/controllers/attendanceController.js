@@ -178,9 +178,49 @@ const getCustomerAttendance = asyncHandler(async (req, res, next) => {
     sendSuccess(res, 200, { attendance });
 });
 
+/**
+ * @desc    Get current gym count (members in gym now)
+ * @route   GET /api/attendance/current-count
+ * @access  Private (Members + Admin)
+ */
+const getCurrentGymCount = asyncHandler(async (req, res, next) => {
+    // Time window: 90 minutes (1.5 hours)
+    const TIME_WINDOW_MINUTES = 90;
+
+    // Calculate cutoff time
+    const cutoffTime = new Date();
+    cutoffTime.setMinutes(cutoffTime.getMinutes() - TIME_WINDOW_MINUTES);
+
+    // Count unique customers who checked in after the cutoff time
+    const recentAttendance = await Attendance.aggregate([
+        {
+            $match: {
+                timestamp: { $gte: cutoffTime }
+            }
+        },
+        {
+            $group: {
+                _id: '$customerId' // Group by customerId to get unique members
+            }
+        },
+        {
+            $count: 'count' // Count the unique groups
+        }
+    ]);
+
+    const count = recentAttendance.length > 0 ? recentAttendance[0].count : 0;
+
+    sendSuccess(res, 200, {
+        count,
+        timeWindow: TIME_WINDOW_MINUTES,
+        timestamp: new Date()
+    });
+});
+
 module.exports = {
     markAttendance,
     getAttendance,
     getAttendanceStats,
-    getCustomerAttendance
+    getCustomerAttendance,
+    getCurrentGymCount
 };
