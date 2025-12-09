@@ -74,12 +74,6 @@ if (process.env.NODE_ENV === 'development') {
     }));
 }
 
-// Serve Member Portal at /member-app (PWA)
-app.use('/member-app', express.static(path.join(__dirname, '../public/member-app')));
-
-// Serve Admin Panel static files (at root)
-app.use(express.static(path.join(__dirname, '../public')));
-
 // Static files for uploads
 app.use('/uploads', express.static('uploads'));
 
@@ -103,7 +97,13 @@ app.use('/api/member', require('./routes/member.routes'));
 app.use('/api/payments', require('./routes/payment.routes'));
 app.use('/api/announcements', require('./routes/announcement.routes'));
 
-// 404 handler
+// Serve Member Portal at /member-app (PWA) - AFTER API routes
+app.use('/member-app', express.static(path.join(__dirname, '../public/member-app')));
+
+// Serve Admin Panel static files (at root) - AFTER API routes
+app.use(express.static(path.join(__dirname, '../public')));
+
+// 404 handler - MUST BE LAST
 app.use((req, res) => {
     res.status(404).json({
         status: 'error',
