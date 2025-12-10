@@ -1161,9 +1161,12 @@ class GymApp {
         }
 
         // Logout button
-        document.getElementById('menu-logout-btn').addEventListener('click', () => {
-            this.handleLogout();
-        });
+        const logoutBtn = document.getElementById('menu-logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
+                this.handleLogout();
+            });
+        }
 
         // Import Excel
         document.getElementById('menu-import-btn').addEventListener('click', (e) => {
