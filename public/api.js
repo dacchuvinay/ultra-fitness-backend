@@ -336,4 +336,27 @@ class API {
     async getPaymentStats() {
         return await this.request(API_CONFIG.ENDPOINTS.PAYMENT_STATS);
     }
+
+    // ===================================
+    // Announcement Methods
+    // ===================================
+
+    async getAllAnnouncements() {
+        return await this.request('/api/announcements', {
+            method: 'GET',
+        });
+    }
+
+    async createAnnouncement(announcementData) {
+        return await this.request('/api/announcements', {
+            method: 'POST',
+            body: JSON.stringify(announcementData),
+        });
+    }
+
+    async deleteAnnouncement(id) {
+        return await this.request(`/api/announcements/${id}`, {
+            method: 'DELETE',
+        });
+    }
 }
