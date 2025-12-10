@@ -1120,27 +1120,39 @@ class GymApp {
             });
         }
 
-        document.getElementById('menu-attendance-btn').addEventListener('click', () => {
-            this.toggleAttendanceView();
-            this.closeHamburgerMenu();
-        });
+        const attendanceBtn = document.getElementById('menu-attendance-btn');
+        if (attendanceBtn) {
+            attendanceBtn.addEventListener('click', () => {
+                this.toggleAttendanceView();
+                this.closeHamburgerMenu();
+            });
+        }
 
-        document.getElementById('menu-scan-qr-btn').addEventListener('click', () => {
-            this.initAudio(); // Initialize audio context on user interaction
-            this.openScannerModal();
-            this.closeHamburgerMenu();
-        });
+        const scanQrBtn = document.getElementById('menu-scan-qr-btn');
+        if (scanQrBtn) {
+            scanQrBtn.addEventListener('click', () => {
+                this.initAudio(); // Initialize audio context on user interaction
+                this.openScannerModal();
+                this.closeHamburgerMenu();
+            });
+        }
 
-        document.getElementById('menu-export-btn').addEventListener('click', () => {
-            this.exportToExcel();
-            this.closeHamburgerMenu();
-        });
+        const exportBtn = document.getElementById('menu-export-btn');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', () => {
+                this.exportToExcel();
+                this.closeHamburgerMenu();
+            });
+        }
 
         // Add customer button (in menu)
-        document.getElementById('menu-add-customer-btn').addEventListener('click', () => {
-            this.openCustomerModal();
-            this.closeHamburgerMenu();
-        });
+        const addCustomerBtn = document.getElementById('menu-add-customer-btn');
+        if (addCustomerBtn) {
+            addCustomerBtn.addEventListener('click', () => {
+                this.openCustomerModal();
+                this.closeHamburgerMenu();
+            });
+        }
 
         // Dark mode toggle (in menu)
         const themeToggleBtn = document.getElementById('menu-theme-toggle');
@@ -1169,10 +1181,13 @@ class GymApp {
         }
 
         // Import Excel
-        document.getElementById('menu-import-btn').addEventListener('click', (e) => {
-            document.getElementById('import-excel-input').click();
-            this.closeHamburgerMenu();
-        });
+        const importBtn = document.getElementById('menu-import-btn');
+        if (importBtn) {
+            importBtn.addEventListener('click', (e) => {
+                document.getElementById('import-excel-input').click();
+                this.closeHamburgerMenu();
+            });
+        }
 
         document.getElementById('import-excel-input').addEventListener('change', (e) => {
             this.importCustomersFromExcel(e);
