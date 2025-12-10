@@ -271,27 +271,40 @@ class GymApp {
         window.location.reload();
     }
 
-    handlePasswordChange(currentPwd, newPwd, confirmPwd) {
-        const storedPassword = localStorage.getItem('ultraFitnessPassword') || '0000';
-
-        if (currentPwd !== storedPassword) {
-            this.showNotification('error', 'Incorrect Password', 'Current password is incorrect.');
-            return;
-        }
-
+    async handlePasswordChange(currentPwd, newPwd, confirmPwd) {
+        // Validation
         if (newPwd !== confirmPwd) {
             this.showNotification('error', 'Password Mismatch', 'New passwords do not match.');
             return;
         }
 
-        if (newPwd.length < 4) {
-            this.showNotification('error', 'Weak Password', 'Password must be at least 4 characters.');
+        if (newPwd.length < 6) {
+            this.showNotification('error', 'Weak Password', 'Password must be at least 6 characters.');
             return;
         }
 
-        localStorage.setItem('ultraFitnessPassword', newPwd);
-        this.showNotification('success', 'Password Changed', 'Your password has been updated successfully.');
-        this.closePasswordModal();
+        if (currentPwd === newPwd) {
+            this.showNotification('error', 'Same Password', 'New password must be different from current password.');
+            return;
+        }
+
+        try {
+            this.setLoading(true);
+            await this.api.changePassword(currentPwd, newPwd);
+            this.showNotification('success', 'Password Changed', 'Your password has been updated successfully.');
+            this.closePasswordModal();
+            document.getElementById('password-form').reset();
+        } catch (error) {
+            console.error('Password change failed:', error);
+            // Show specific error message from server
+            if (error.message && error.message.includes('current password')) {
+                this.showNotification('error', 'Incorrect Password', 'Current password is incorrect.');
+            } else {
+                this.showNotification('error', 'Change Failed', error.message || 'Could not change password');
+            }
+        } finally {
+            this.setLoading(false);
+        }
     }
 
     // Theme Management
@@ -1135,12 +1148,26 @@ class GymApp {
         if (themeToggleBtn) {
             themeToggleBtn.addEventListener('click', () => {
                 this.toggleTheme();
+                this.closeHamburgerMenu();
             });
         }
 
+        // Password change
+        const passwordBtn = document.getElementById('menu-password-btn');
+        if (passwordBtn) {
+            passwordBtn.addEventListener('click', () => {
+                this.openPasswordModal();
+                this.closeHamburgerMenu();
+            });
+        }
+
+        // Logout button
+        document.getElementById('menu-logout-btn').addEventListener('click', () => {
+            this.handleLogout();
+        });
 
         // Import Excel
-        document.getElementById('menu-import-btn').addEventListener('click', () => {
+        document.getElementById('menu-import-btn').addEventListener('click', (e) => {
             document.getElementById('import-excel-input').click();
             this.closeHamburgerMenu();
         });
