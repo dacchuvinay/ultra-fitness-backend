@@ -17,10 +17,8 @@ router.use(protect);
 router.use(restrictTo('admin'));
 
 router.route('/')
-    .post(createAnnouncement);
-
-router.route('/admin')
-    .get(getAllAnnouncements);
+    .get(getAllAnnouncements)  // Get all announcements
+    .post(createAnnouncement); // Create new announcement
 
 router.route('/:id')
     .delete(deleteAnnouncement);
