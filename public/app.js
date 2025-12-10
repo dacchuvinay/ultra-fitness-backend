@@ -1122,7 +1122,6 @@ class GymApp {
 
         document.getElementById('menu-attendance-btn').addEventListener('click', () => {
             this.toggleAttendanceView();
-            this.updateMenuLabels();
             this.closeHamburgerMenu();
         });
 
@@ -1705,7 +1704,8 @@ class GymApp {
             if (attendanceSection) attendanceSection.style.display = 'none';
         }
 
-        this.updateMenuLabels();
+        // Update menu labels after state is set
+        setTimeout(() => this.updateMenuLabels(), 50);
     }
 
     toggleAttendanceView() {
@@ -1729,6 +1729,9 @@ class GymApp {
 
                 listSection.style.animation = 'fadeIn 0.4s ease-out forwards';
                 controlsSection.style.animation = 'fadeIn 0.4s ease-out forwards';
+
+                // Update menu labels after transition
+                this.updateMenuLabels();
             }, 300);
 
         } else {
@@ -1747,10 +1750,11 @@ class GymApp {
                 attendanceSection.style.animation = 'fadeIn 0.4s ease-out forwards';
 
                 this.renderAttendance();
+
+                // Update menu labels after transition
+                this.updateMenuLabels();
             }, 300);
         }
-
-        this.updateMenuLabels();
     }
 
     async renderAttendance() {
