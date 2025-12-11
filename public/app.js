@@ -1189,9 +1189,12 @@ class GymApp {
             });
         }
 
-        document.getElementById('import-excel-input').addEventListener('change', (e) => {
-            this.importCustomersFromExcel(e);
-        });
+        const importInput = document.getElementById('import-excel-input');
+        if (importInput) {
+            importInput.addEventListener('change', (e) => {
+                this.importCustomersFromExcel(e);
+            });
+        }
 
         // Password form submit
         document.getElementById('password-form').addEventListener('submit', (e) => {
