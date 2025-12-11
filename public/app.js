@@ -2365,9 +2365,13 @@ class GymApp {
                 this.playBeep('long');
                 this.playVoiceAlert('Your plan got expired so, please renew it');
                 this.showVisualFeedback('warning');
+
                 const time = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
-                this.showAttendanceSuccess(customerObj || { name: 'Member' }, time, 'expired');
-                this.showNotification('error', 'Membership Expired', error.message);
+                // Ensure we have a valid customer object for the modal
+                const displayCustomer = customerObj || (typeof customer === 'object' ? customer : { name: 'Member' });
+
+                this.showAttendanceSuccess(displayCustomer, time, 'expired');
+                // Notification removed as the modal provides sufficient feedback
             } else {
                 this.showNotification('error', 'Error', error.message);
             }
