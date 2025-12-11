@@ -16,6 +16,11 @@ const markAttendance = asyncHandler(async (req, res, next) => {
         return next(new AppError('Customer not found', 404));
     }
 
+    // 1.1 Check if plan is expired
+    if (customer.status === 'expired') {
+        return next(new AppError('Membership expired! Please renew to enter.', 403));
+    }
+
     // 2. Check if already marked for today
     const todayStr = getLocalDateString();
 

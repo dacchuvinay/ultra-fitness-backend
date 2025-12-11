@@ -2361,6 +2361,11 @@ class GymApp {
             if (error.message.includes('already checked in') || error.message.includes('already marked')) {
                 this.showNotification('warning', 'Already Checked In', 'Attendance already marked for today');
                 this.playBeep('short');
+            } else if (error.message.includes('Membership expired')) {
+                this.playBeep('long');
+                this.playVoiceAlert('Your plan got expired so, please renew it');
+                this.showVisualFeedback('warning');
+                this.showNotification('error', 'Membership Expired', error.message);
             } else {
                 this.showNotification('error', 'Error', error.message);
             }

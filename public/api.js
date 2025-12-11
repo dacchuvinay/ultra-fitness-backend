@@ -96,7 +96,13 @@ class API {
 
         try {
             const response = await fetch(url, config);
-            const data = await response.json();
+            let data;
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                data = await response.json();
+            } else {
+                data = { message: await response.text() };
+            }
 
             if (!response.ok) {
                 // Handle authentication errors
