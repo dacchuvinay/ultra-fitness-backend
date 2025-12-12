@@ -5,8 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ultra Fitness - Gym Management System</title>
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💪</text></svg>">
     <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -636,6 +634,10 @@
                 <div id="payment-view" class="view-overlay">
                     <div class="view-header">
                         <h2>Payment History</h2>
+                        <div style="flex: 1;"></div>
+                        <button class="action-btn secondary" style="background: rgba(46, 213, 115, 0.1); color: #2ed573; border: 1px solid rgba(46, 213, 115, 0.2); margin-right: 15px;" onclick="app.exportPayments()">
+                            <span class="btn-icon">📊</span> Export
+                        </button>
                         <button class="btn-icon" onclick="app.togglePaymentView()">✕</button>
                     </div>
                     <div class="view-content">

@@ -886,6 +886,42 @@ class GymApp {
         this.renderPayments(filtered);
     }
 
+    async exportPayments() {
+        const payments = this.payments || [];
+
+        if (payments.length === 0) {
+            this.showNotification('warning', 'No Data', 'No payment records to export.');
+            return;
+        }
+
+        try {
+            const exportData = payments.map(p => ({
+                'Date': new Date(p.paymentDate).toLocaleDateString(),
+                'Customer Name': p.customerName,
+                'Amount': p.amount,
+                'Method': p.paymentMethod,
+                'Plan': p.planType,
+                'Status': p.status,
+                'Receipt No': p.receiptNumber || '-',
+                'Added By': p.addedBy ? p.addedBy.name : 'System'
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Payments");
+
+            const dateStr = new Date().toISOString().split('T')[0];
+            const fileName = `UltraFitness_Payments_${dateStr}.xlsx`;
+
+            XLSX.writeFile(wb, fileName);
+
+            this.showNotification('success', 'Export Successful', 'Payment data exported to Excel.');
+        } catch (error) {
+            console.error('Export failed:', error);
+            this.showNotification('error', 'Export Failed', 'Could not export data.');
+        }
+    }
+
     async loadPayments() {
         try {
             const tbody = document.getElementById('payment-table-body');
@@ -899,7 +935,7 @@ class GymApp {
                 `).join('');
             }
 
-            const response = await this.api.getPayments();
+            const response = await this.api.getPayments({ limit: 1000 });
             this.payments = response.data.payments;
             this.renderPayments(this.payments);
         } catch (error) {
