@@ -562,6 +562,26 @@ class GymApp {
         return { total, active, expiring, expired };
     }
 
+    async updateAttendanceStats() {
+        try {
+            // Get stats for today
+            const today = this.getLocalDateString();
+            const response = await this.api.getAttendanceStats(today);
+
+            if (response.data && response.data.daily) {
+                const stats = response.data.daily;
+
+                // Update DOM elements
+                // Using helper to animate numbers
+                this.animateValue(document.getElementById('today-checkins'), 0, stats.total, 1000);
+                this.animateValue(document.getElementById('active-checkins'), 0, stats.active, 1000);
+                this.animateValue(document.getElementById('expired-checkins'), 0, stats.expired, 1000);
+            }
+        } catch (error) {
+            console.error('Failed to update attendance stats:', error);
+        }
+    }
+
     // Notification System
     checkExpiringPlans() {
         const expiring = this.customers.filter(c => c.getStatus() === 'expiring');
@@ -1799,14 +1819,8 @@ class GymApp {
             }
             // -----------------------------------
 
-            // Update stats - fetch today's stats specifically
-            const statsResponse = await this.api.getAttendanceStats(today);
-            const stats = statsResponse.data;
-
-            // Access the nested daily stats structure
-            document.getElementById('today-checkins').textContent = stats.daily.total;
-            document.getElementById('active-checkins').textContent = stats.daily.active;
-            document.getElementById('expired-checkins').textContent = stats.daily.expired;
+            // Update stats
+            this.updateAttendanceStats();
 
             // Render list
             const container = document.getElementById('attendance-list');
@@ -2353,9 +2367,9 @@ class GymApp {
                 this.showAttendanceSuccess(customerObj || { name: 'Member' }, time, status);
             }
 
-            // Always refresh attendance dashboard after successful scan
-            // This ensures the Attendance Tracker shows updated records immediately
+            // Always refresh attendance dashboard and stats after successful scan
             await this.renderAttendance();
+            this.updateAttendanceStats();
 
         } catch (error) {
             console.error('Error marking attendance:', error);
