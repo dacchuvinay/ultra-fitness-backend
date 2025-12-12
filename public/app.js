@@ -2329,10 +2329,11 @@ class GymApp {
 
     // Attendance Management
     async markAttendance(customer) {
+        let customerObj;
         try {
             // Check if customer is object or ID
             const customerId = customer.id || customer;
-            const customerObj = typeof customer === 'object' ? customer : this.customers.find(c => c.id === customer);
+            customerObj = typeof customer === 'object' ? customer : this.customers.find(c => c.id === customer);
 
             await this.api.markAttendance(customerId);
 
