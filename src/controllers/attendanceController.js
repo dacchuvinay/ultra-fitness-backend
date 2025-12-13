@@ -67,7 +67,8 @@ const markAttendance = asyncHandler(async (req, res, next) => {
 
     for (const badge of badges) {
         const threshold = BADGE_MILESTONES[badge];
-        if (customer.totalVisits === threshold && !customer.badgesEarned.includes(badge)) {
+        // FIX: Changed from === to >= to allow retroactive awarding if milestone was skipped
+        if (customer.totalVisits >= threshold && !customer.badgesEarned.includes(badge)) {
             customer.badgesEarned.push(badge);
             badgeEarned = {
                 showPopup: true,
@@ -75,7 +76,11 @@ const markAttendance = asyncHandler(async (req, res, next) => {
                 visits: customer.totalVisits,
                 message: BADGE_MESSAGES[badge]
             };
-            break; // Only award one badge at a time
+            // Note: We don't break here to allow unlocking multiple badges at once if needed
+            // But if we want to show only one popup at a time, we keep the break.
+            // Let's allow multiple but only return the highest one for the popup to avoid spam.
+            // For now, keeping the break means they get one per visit, which is good for engagement.
+            break;
         }
     }
 
