@@ -922,6 +922,24 @@ class GymApp {
         }
     }
 
+    async syncBadges() {
+        try {
+            if (!confirm('This will scan all customers and retroactive award missing badges. Continue?')) {
+                return;
+            }
+
+            this.showNotification('info', 'Syncing...', 'Starting badge synchronization...');
+
+            const response = await this.api.syncBadges();
+            const count = response.data.updatedCount;
+
+            this.showNotification('success', 'Sync Complete', `Successfully updated ${count} customers with new badges.`);
+        } catch (error) {
+            console.error('Badge sync failed:', error);
+            this.showNotification('error', 'Sync Failed', error.message || 'Could not sync badges.');
+        }
+    }
+
     async loadPayments() {
         try {
             const tbody = document.getElementById('payment-table-body');

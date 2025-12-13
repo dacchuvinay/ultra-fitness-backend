@@ -5,7 +5,8 @@ const {
     createCustomer,
     updateCustomer,
     deleteCustomer,
-    getCustomerStats
+    getCustomerStats,
+    syncBadges
 } = require('../controllers/customerController');
 const { protect, restrictTo } = require('../middleware/auth');
 const { validate, customerSchemas } = require('../middleware/validation');
@@ -17,6 +18,9 @@ router.use(protect);
 
 // Stats route
 router.get('/stats/overview', getCustomerStats);
+
+// Sync Badges route (Admin only)
+router.post('/sync-badges', restrictTo('admin'), syncBadges);
 
 /**
  * @swagger

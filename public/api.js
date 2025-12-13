@@ -15,6 +15,7 @@ const API_CONFIG = {
         CUSTOMERS: '/api/customers',
         CUSTOMER_BY_ID: (id) => `/api/customers/${id}`,
         CUSTOMER_STATS: '/api/customers/stats/overview',
+        SYNC_BADGES: '/api/customers/sync-badges',
 
         // Attendance
         ATTENDANCE: '/api/attendance',
@@ -207,6 +208,12 @@ class API {
 
     async getCustomerStats() {
         return await this.request(API_CONFIG.ENDPOINTS.CUSTOMER_STATS);
+    }
+
+    async syncBadges() {
+        return await this.request(API_CONFIG.ENDPOINTS.SYNC_BADGES, {
+            method: 'POST'
+        });
     }
 
     // ===================================

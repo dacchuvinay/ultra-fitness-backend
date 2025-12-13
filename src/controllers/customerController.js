@@ -210,11 +210,54 @@ const getCustomerStats = asyncHandler(async (req, res, next) => {
     });
 });
 
+/**
+ * @desc    Sync badges for all customers (Retroactive sync)
+ * @route   POST /api/customers/sync-badges
+ * @access  Private (Admin)
+ */
+const syncBadges = asyncHandler(async (req, res, next) => {
+    const customers = await Customer.find({});
+    let updatedCount = 0;
+
+    const BADGE_MILESTONES = {
+        'Bronze': 10,
+        'Silver': 30,
+        'Gold': 60,
+        'Beast Mode': 120
+    };
+    const badges = ['Bronze', 'Silver', 'Gold', 'Beast Mode'];
+
+    for (const customer of customers) {
+        let changed = false;
+
+        // Ensure badgesEarned is initialized
+        if (!customer.badgesEarned) {
+            customer.badgesEarned = [];
+        }
+
+        for (const badge of badges) {
+            const threshold = BADGE_MILESTONES[badge];
+            if (customer.totalVisits >= threshold && !customer.badgesEarned.includes(badge)) {
+                customer.badgesEarned.push(badge);
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            await customer.save();
+            updatedCount++;
+        }
+    }
+
+    sendSuccess(res, 200, { updatedCount }, `Badge sync complete. Updated ${updatedCount} customers.`);
+});
+
 module.exports = {
     getCustomers,
     getCustomer,
     createCustomer,
     updateCustomer,
     deleteCustomer,
-    getCustomerStats
+    getCustomerStats,
+    syncBadges
 };
